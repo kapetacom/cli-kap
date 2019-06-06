@@ -53,7 +53,8 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     args = args.slice(1);
 
     var env = Object.assign({}, process.env);
-    env.BLOCKWARE_PARENT_CLI = basename(process.argv[0]);
+
+    env.BLOCKWARE_PARENT_CLI = this.name();
 
     var proc;
     if (process.platform !== 'win32') {

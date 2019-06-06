@@ -5,9 +5,12 @@ const FS = require('fs');
 
 const COMMANDS_BASEDIR = __dirname + '/commands';
 
-program.name(packageData.name)
-    .version(packageData.version);
+if (!FS.existsSync(COMMANDS_BASEDIR)) {
+    FS.mkdir(COMMANDS_BASEDIR);
+}
 
+program.name('blockctl')
+    .version(packageData.version);
 
 const commands = FS.readdirSync(COMMANDS_BASEDIR);
 
@@ -26,7 +29,6 @@ if (commands.length > 0) {
             console.error('Failed to load command: %s', commandId, e.stack);
         }
     });
-
 }
 
 if (process.argv.length < 3) {
@@ -34,6 +36,5 @@ if (process.argv.length < 3) {
     program.help();
     process.exit(1);
 }
-
 
 program.parse(process.argv);
