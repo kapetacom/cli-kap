@@ -1,30 +1,49 @@
 #!/usr/bin/env node
 const program = require('./src/commander');
 const packageData = require('./package.json');
-const FS = require('fs');
-
-const COMMANDS_BASEDIR = __dirname + '/commands';
-
-if (!FS.existsSync(COMMANDS_BASEDIR)) {
-    FS.mkdir(COMMANDS_BASEDIR);
-}
+const Commands = require('./src/commands');
 
 program.name('blockctl')
     .version(packageData.version);
 
-const commands = FS.readdirSync(COMMANDS_BASEDIR);
+program
+    .command('uninstall <command-name>')
+        .alias('rm')
+        .action((commandName) => {
+            Commands.uninstall(commandName)
+            process.exit(0);
+        });
+
+program
+    .command('install <package-name> [command-name]')
+        .alias('i')
+        .action((packageName, commandName) => {
+            if (packageName.startsWith('@@') && !commandName) {
+                commandName = packageName.substr(2).toLowerCase();
+                packageName = '@blockware/blockctl-command-' + commandName.toLowerCase();
+            }
+
+            Commands.ensure(packageName, commandName);
+            process.exit(0);
+        });
+
+program
+    .command('upgrade <command-name>')
+        .action((commandName) => {
+            Commands.upgrade(commandName);
+            process.exit(0);
+        });
+
+Commands.ensureCommands();
+
+const commands = Commands.getCommands();
 
 if (commands.length > 0) {
     commands.forEach((commandId) => {
         try {
+            const commandInfo = Commands.getCommandInfo(commandId);
 
-            const moduleInfo = require('./commands/' + commandId + '/package.json');
-
-            if (!moduleInfo.command) {
-                moduleInfo.command = commandId;
-            }
-
-            program.command(moduleInfo.command, moduleInfo.description || 'No description');
+            program.command(commandInfo.command, commandInfo.description);
         } catch(e) {
             console.error('Failed to load command: %s', commandId, e.stack);
         }

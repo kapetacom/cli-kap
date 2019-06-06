@@ -9,6 +9,7 @@
         "blockctl": "bin/blockctl"
     },
     "dependencies": {
-        "commander": "2.20.0"
+        "commander": "2.20.0",
+        "rimraf": "2.6.3"
     }
 }
