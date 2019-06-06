@@ -1,3 +1,4 @@
 {
-    "test": "@blockware/blockctl-command-test"
+    "test": "@blockware/blockctl-command-test",
+    "gui": "@blockware/blockctl-command-gui"
 }
