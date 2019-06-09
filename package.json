@@ -1,5 +1,5 @@
 {
-    "name": "@blockware/blockctl",
+    "name": "blockctl",
     "version": "0.0.3",
     "description": "Blockware Command Line Utility",
     "main": "index.js",
