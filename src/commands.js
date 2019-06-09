@@ -5,7 +5,7 @@ const CommandInstaller = require('./CommandInstaller');
 
 const HOME_DIR = require('os').homedir();
 const BASEDIR_COMMANDS = Path.normalize(__dirname + '/../commands');
-const BASEDIR_USER = HOME_DIR + '/.blockctl';
+const BASEDIR_USER = HOME_DIR + '/.blockware/blockctl';
 const BASEDIR_SYSTEM = HOME_DIR + '/etc/blockctl';
 
 const USER_COMMANDS = BASEDIR_USER + '/commands.json';
