@@ -18,8 +18,9 @@ program
     .command('install <package-name> [command-name]')
         .alias('i')
         .action((packageName, commandName) => {
-            if (packageName.startsWith('@@') && !commandName) {
-                commandName = packageName.substr(2).toLowerCase();
+            if (!commandName) {
+                //Defaults to blockware package
+                commandName = packageName;
                 packageName = '@blockware/blockctl-command-' + commandName.toLowerCase();
             }
 
