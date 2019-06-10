@@ -1,4 +1,5 @@
 {
     "gui": "@blockware/blockctl-command-gui",
-    "codegen": "@blockware/blockctl-command-codegen"
+    "codegen": "@blockware/blockctl-command-codegen",
+    "local-cluster": "@blockware/blockctl-command-local-cluster"
 }
