@@ -1,5 +1,6 @@
 const FS = require('fs');
 const rimraf = require("rimraf");
+const mkdirp = require("mkdirp");
 const Path = require('path');
 const CommandInstaller = require('./CommandInstaller');
 
@@ -40,11 +41,11 @@ class Commands {
     
     _ensureBaseDirs() {
         if (!FS.existsSync(BASEDIR_COMMANDS)) {
-            FS.mkdirSync(BASEDIR_COMMANDS);
+            mkdirp.sync(BASEDIR_COMMANDS);
         }
 
         if (!FS.existsSync(BASEDIR_USER)) {
-            FS.mkdirSync(BASEDIR_USER);
+            mkdirp.sync(BASEDIR_USER);
         }
     }
 
