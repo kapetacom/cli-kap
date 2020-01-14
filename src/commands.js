@@ -177,7 +177,7 @@ class Commands {
     }
     
     getCommandInfo(commandName) {
-        const commandInfo = require('../commands/' + commandName + '/package.json');
+        const commandInfo = require(Path.join(BASEDIR_COMMANDS, commandName, 'package.json'));
 
         if (!commandInfo.command) {
             commandInfo.command = commandName;
