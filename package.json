@@ -1,6 +1,6 @@
 {
     "name": "blockctl",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "description": "Blockware Command Line Utility",
     "main": "index.js",
     "license": "MIT",
