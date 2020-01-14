@@ -8,9 +8,12 @@
     "bin": {
         "blockctl": "bin/blockctl"
     },
+    "scripts": {
+        "postinstall": "./bin/blockctl init-defaults"
+    },
     "dependencies": {
         "@blockware/local-cluster-config": "0.0.6",
-        "@blockware/npm-package-handler": "0.0.1",
+        "@blockware/npm-package-handler": "0.0.3",
         "commander": "2.20.0",
         "mkdirp": "0.5.1",
         "rimraf": "2.6.3"
