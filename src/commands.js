@@ -125,7 +125,7 @@ class Commands {
         console.log('Upgrading command %s for %s', commandName, packageJson.name);
 
         const npm = new NPM(path);
-        npm.upgrade(commandName);
+        npm.upgrade(packageJson.name);
 
         console.log('-- Upgraded command %s from %s', commandName, packageJson.name);
     }
