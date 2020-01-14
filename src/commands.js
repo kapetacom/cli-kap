@@ -2,24 +2,22 @@ const FS = require('fs');
 const mkdirp = require("mkdirp");
 const Path = require('path');
 const NPM = require('@blockware/npm-package-handler');
-const HOME_DIR = require('os').homedir();
-const BASEDIR_COMMANDS = Path.normalize(__dirname + '/../commands');
-const BASEDIR_USER = HOME_DIR + '/.blockware/blockctl';
-const BASEDIR_SYSTEM = HOME_DIR + '/etc/blockctl';
+const ClusterConfiguration = require('@blockware/local-cluster-config');
 
+const BASEDIR_BLOCKWARE = ClusterConfiguration.getBlockwareBasedir();
+const BASEDIR_USER = Path.join(BASEDIR_BLOCKWARE, 'blockctl');
+const BASEDIR_COMMANDS = Path.join(BASEDIR_USER, 'commands');
 const USER_COMMANDS = BASEDIR_USER + '/commands.json';
-const SYSTEM_COMMANDS = BASEDIR_SYSTEM + '/commands.json';
-const DEFAULT_COMMANDS = Path.normalize(__dirname + '/../default-commands.json');
 
+const DEFAULT_COMMANDS = Path.normalize(__dirname + '/../default-commands.json');
 
 const PATHS = [
     USER_COMMANDS,
-    SYSTEM_COMMANDS,
     DEFAULT_COMMANDS
 ];
 
 function getCommandPath(commandName) {
-    return Path.normalize(__dirname + '/../commands/' + commandName);
+    return Path.join(BASEDIR_COMMANDS, commandName);
 }
 
 function getPackageJSON(commandName) {
@@ -38,6 +36,10 @@ class Commands {
     }
     
     _ensureBaseDirs() {
+        if (!FS.existsSync(BASEDIR_COMMANDS)) {
+            mkdirp.sync(BASEDIR_COMMANDS);
+        }
+
         if (!FS.existsSync(BASEDIR_COMMANDS)) {
             mkdirp.sync(BASEDIR_COMMANDS);
         }
