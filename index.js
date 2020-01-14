@@ -52,7 +52,7 @@ program
 program
     .command('init-defaults')
     .description('Installs default commands.')
-    .action((commandName) => {
+    .action(() => {
         Commands.ensureCommands();
         process.exit(0);
     });
