@@ -1,9 +1,7 @@
 const FS = require('fs');
-const rimraf = require("rimraf");
 const mkdirp = require("mkdirp");
 const Path = require('path');
-const CommandInstaller = require('./CommandInstaller');
-
+const NPM = require('@blockware/npm-package-handler');
 const HOME_DIR = require('os').homedir();
 const BASEDIR_COMMANDS = Path.normalize(__dirname + '/../commands');
 const BASEDIR_USER = HOME_DIR + '/.blockware/blockctl';
@@ -84,9 +82,9 @@ class Commands {
 
         console.log('Installing command %s in %s', commandName, path);
 
-        const installer = new CommandInstaller(packageName, path);
+        const npm = new NPM(path);
 
-        installer.process();
+        npm.install(packageName);
 
         this._commands[commandName] = packageName;
         this._writeUserCommands();
@@ -101,9 +99,11 @@ class Commands {
 
         const path = getCommandPath(commandName);
 
-        console.log('Removing command %s from %s', commandName, path);
+        const npm = new NPM(path);
 
-        rimraf.sync(path);
+        npm.remove();
+
+        console.log('Removing command %s from %s', commandName, path);
 
         delete this._commands[commandName];
         this._writeUserCommands();
@@ -118,13 +118,40 @@ class Commands {
         }
 
         const packageJson = getPackageJSON(commandName);
+        const path = getCommandPath(commandName);
 
         console.log('Upgrading command %s for %s', commandName, packageJson.name);
 
-        this.uninstall(commandName);
-        this.install(packageJson.name, commandName);
+        const npm = new NPM(path);
+        npm.upgrade(commandName);
 
         console.log('-- Upgraded command %s from %s', commandName, packageJson.name);
+    }
+
+    link(commandName) {
+        const packageJson = Path.join(process.cwd(), 'package.json');
+
+        if (!FS.existsSync(packageJson)) {
+            console.error('No NPM module found in current directory');
+            return;
+        }
+
+        if (!commandName) {
+            const packageInfo = readJSON(packageJson);
+            if (!packageInfo.command) {
+                console.error('package.json is missing "command" property and no command name was specified.');
+                return;
+            }
+
+            commandName = packageInfo.command;
+        }
+
+        console.log('Linking command %s to current working dir', commandName);
+
+        const path = getCommandPath(commandName);
+        const npm = new NPM(path);
+
+        npm.link(process.cwd());
     }
 
     ensure(packageName, commandName, silent) {

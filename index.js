@@ -9,31 +9,45 @@ program.name('blockctl')
 program
     .command('uninstall <command-name>')
         .alias('rm')
+        .description('Will remove the command specified from the list of available command')
         .action((commandName) => {
             Commands.uninstall(commandName)
             process.exit(0);
         });
 
 program
-    .command('install <package-name> [command-name]')
-        .alias('i')
-        .action((packageName, commandName) => {
-            if (!commandName) {
-                //Defaults to blockware package
-                commandName = packageName;
-                packageName = '@blockware/blockctl-command-' + commandName.toLowerCase();
-            }
+    .command('link [command-name]')
+    .description('Links current working directory as a command. If no command name is specified it will use the "command" property from package.json')
+    .alias('ln')
+    .action((commandName) => {
+        Commands.link(commandName);
+        process.exit(0);
+    });
 
-            Commands.ensure(packageName, commandName);
-            process.exit(0);
-        });
+
+program
+    .command('install <package-name> [command-name]')
+    .alias('i')
+    .description('Will install the NPM package as a command. Must be a valid blockctl-command implementation.')
+    .action((packageName, commandName) => {
+        if (!commandName) {
+            //Defaults to blockware package
+            commandName = packageName;
+            packageName = '@blockware/blockctl-command-' + commandName.toLowerCase();
+        }
+
+        Commands.ensure(packageName, commandName);
+        process.exit(0);
+    });
+
 
 program
     .command('upgrade <command-name>')
-        .action((commandName) => {
-            Commands.upgrade(commandName);
-            process.exit(0);
-        });
+    .description('Upgrades an existing command by installing the latest from the NPM registry.')
+    .action((commandName) => {
+        Commands.upgrade(commandName);
+        process.exit(0);
+    });
 
 Commands.ensureCommands();
 

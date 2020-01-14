@@ -9,6 +9,7 @@
         "blockctl": "bin/blockctl"
     },
     "dependencies": {
+        "@blockware/npm-package-handler": "0.0.1",
         "commander": "2.20.0",
         "mkdirp": "0.5.1",
         "rimraf": "2.6.3"
