@@ -64,10 +64,7 @@ if (commands.length > 0) {
     commands.forEach((commandId) => {
         try {
             const commandInfo = Commands.getCommandInfo(commandId);
-
-            program.command(commandInfo.command)
-                .description(commandInfo.description)
-                .action(commandInfo.action);
+            program.command(commandInfo.command, commandInfo.description);
         } catch(e) {
             console.error('Failed to load command: %s', commandId, e.stack);
         }
