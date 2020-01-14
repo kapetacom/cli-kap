@@ -9,7 +9,7 @@
         "blockctl": "bin/blockctl"
     },
     "scripts": {
-        "postinstall": "blockctl init-defaults"
+        "postinstall": "./bin/blockctl init-defaults"
     },
     "dependencies": {
         "@blockware/npm-package-handler": "0.0.1",
