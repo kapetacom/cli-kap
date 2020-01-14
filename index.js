@@ -65,7 +65,9 @@ if (commands.length > 0) {
         try {
             const commandInfo = Commands.getCommandInfo(commandId);
 
-            program.command(commandInfo.command, commandInfo.description);
+            program.command(commandInfo.command)
+                .description(commandInfo.description)
+                .action(commandInfo.action);
         } catch(e) {
             console.error('Failed to load command: %s', commandId, e.stack);
         }

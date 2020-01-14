@@ -6,9 +6,9 @@ const ClusterConfiguration = require('@blockware/local-cluster-config');
 
 const BASEDIR_BLOCKWARE = ClusterConfiguration.getBlockwareBasedir();
 const BASEDIR_USER = Path.join(BASEDIR_BLOCKWARE, 'blockctl');
-const BASEDIR_COMMANDS = Path.join(BASEDIR_USER, 'commands');
 const USER_COMMANDS = BASEDIR_USER + '/commands.json';
 
+const BASEDIR_COMMANDS = Path.join(__dirname, '../commands');
 const DEFAULT_COMMANDS = Path.normalize(__dirname + '/../default-commands.json');
 
 const PATHS = [
