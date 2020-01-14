@@ -49,7 +49,13 @@ program
         process.exit(0);
     });
 
-Commands.ensureCommands();
+program
+    .command('init-defaults')
+    .description('Installs default commands.')
+    .action((commandName) => {
+        Commands.ensureCommands();
+        process.exit(0);
+    });
 
 const commands = Commands.getCommands();
 

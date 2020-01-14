@@ -8,6 +8,9 @@
     "bin": {
         "blockctl": "bin/blockctl"
     },
+    "scripts": {
+        "postinstall": "blockctl init-defaults"
+    },
     "dependencies": {
         "@blockware/npm-package-handler": "0.0.1",
         "commander": "2.20.0",
