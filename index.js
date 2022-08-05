@@ -40,12 +40,51 @@ program
         process.exit(0);
     });
 
-
 program
     .command('upgrade <command-name>')
     .description('Upgrades an existing command by installing the latest from the NPM registry.')
     .action((commandName) => {
         Commands.upgrade(commandName);
+        process.exit(0);
+    });
+
+program
+    .command('login [username]')
+    .description('Authenticates against Blockware Cloud.')
+    .action(async (username) => {
+        await Commands.login(username);
+        process.exit(0);
+    });
+
+program
+    .command('logout')
+    .description('Removes any current authentication for Blockware Cloud.')
+    .action(async () => {
+        await Commands.logout();
+        process.exit(0);
+    });
+
+program
+    .command('identity-list')
+    .description('Lists all available identities.')
+    .action(async () => {
+        await Commands.listIdentities();
+        process.exit(0);
+    });
+
+program
+    .command('whoami')
+    .description('Get current identity.')
+    .action(async () => {
+        await Commands.showCurrentIdentity();
+        process.exit(0);
+    });
+
+program
+    .command('use [identity]')
+    .description('Change to identity.')
+    .action(async (username) => {
+        await Commands.setCurrentIdentity(username);
         process.exit(0);
     });
 

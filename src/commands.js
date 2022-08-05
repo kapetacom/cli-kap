@@ -1,6 +1,9 @@
 const FS = require('fs');
 const mkdirp = require("mkdirp");
 const Path = require('path');
+const inquirer = require('inquirer');
+const request = require('request');
+
 const NPM = require('@blockware/npm-package-handler');
 const ClusterConfiguration = require('@blockware/local-cluster-config');
 
@@ -189,6 +192,90 @@ class Commands {
         
         return commandInfo;
     }
+
+    async login(username) {
+        const questions = [];
+
+        if (!username) {
+            questions.push({
+                type: 'input',
+                name: 'username',
+                message: 'Your Blockware user handle or a registered e-mail address'
+            });
+        }
+
+        questions.push({
+            type: 'password',
+            name: 'password',
+            message: 'Your password'
+        });
+
+        questions.push({
+            type: 'input',
+            name: 'service',
+            message: 'The url to the blockware IAM service you want to authenticate against',
+            default: 'http://localhost:5940'
+        });
+
+        const answers = await inquirer.prompt(questions);
+
+        return new Promise((resolve) => {
+
+            const opts = {
+                url: answers.service + '/oauth2/authorize',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                    type: 'password',
+                    data: {
+                        username: answers.username || username,
+                        password: answers.password
+                    }
+                })
+            };
+
+            request(opts, (err, response, responseBody) => {
+                if (err) {
+                    console.error('Failed to authenticate: ' + err);
+                    resolve();
+                    return;
+                }
+
+                if (response.statusCode > 299) {
+                    const errorBody = JSON.parse(responseBody);
+                    console.error('Failed to authenticate: ' + errorBody.error);
+                    resolve();
+                    return;
+                }
+
+                const {access_token} = JSON.parse(responseBody);
+
+                if (access_token) {
+                    console.log('Authenticated!', responseBody);
+                    resolve();
+                }
+            });
+        });
+    }
+
+    async listIdentities() {
+
+    }
+
+    async showCurrentIdentity() {
+
+    }
+
+    async useIdentity(handle) {
+
+    }
+
+    async logout() {
+
+    }
+
 }
 
 module.exports = new Commands();
