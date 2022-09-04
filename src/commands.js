@@ -193,7 +193,7 @@ class Commands {
         return commandInfo;
     }
 
-    async login(username) {
+    async login(username) {
         const questions = [];
 
         if (!username) {
@@ -260,15 +260,15 @@ class Commands {
         });
     }
 
-    async listIdentities() {
+    async listIdentities() {
 
     }
 
-    async showCurrentIdentity() {
+    async showCurrentIdentity() {
 
     }
 
-    async useIdentity(handle) {
+    async useIdentity(handle) {
 
     }
 
