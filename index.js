@@ -3,6 +3,25 @@ const program = require('./src/commander');
 const packageData = require('./package.json');
 const Commands = require('./src/commands');
 
+function handleError(err) {
+    if (err.error) {
+        console.error('Command failed: %s', err.error);
+    } else {
+        console.error('Unexpected issue: ', err)
+    }
+}
+
+function makeCommand(callback) {
+
+    return async function() {
+        try {
+            await callback(...arguments)
+        } catch (err) {
+            handleError(err);
+        }
+    }
+}
+
 program.name('blockctl')
     .version(packageData.version);
 
@@ -10,26 +29,26 @@ program
     .command('uninstall <command-name>')
         .alias('rm')
         .description('Will remove the command specified from the list of available command')
-        .action((commandName) => {
+        .action(makeCommand((commandName) => {
             Commands.uninstall(commandName)
             process.exit(0);
-        });
+        }));
 
 program
     .command('link [command-name]')
     .description('Links current working directory as a command. If no command name is specified it will use the "command" property from package.json')
     .alias('ln')
-    .action((commandName) => {
+    .action(makeCommand((commandName) => {
         Commands.link(commandName);
         process.exit(0);
-    });
+    }));
 
 
 program
     .command('install <package-name> [command-name]')
     .alias('i')
     .description('Will install the NPM package as a command. Must be a valid blockctl-command implementation.')
-    .action((packageName, commandName) => {
+    .action(makeCommand((packageName, commandName) => {
         if (!commandName) {
             //Defaults to blockware package
             commandName = packageName;
@@ -38,64 +57,64 @@ program
 
         Commands.ensure(packageName, commandName);
         process.exit(0);
-    });
+    }));
 
 program
     .command('upgrade <command-name>')
     .description('Upgrades an existing command by installing the latest from the NPM registry.')
-    .action((commandName) => {
+    .action(makeCommand((commandName) => {
         Commands.upgrade(commandName);
         process.exit(0);
-    });
+    }));
 
 program
-    .command('login [username]')
+    .command('login')
     .description('Authenticates against Blockware Cloud.')
-    .action(async (username) => {
-        await Commands.login(username);
+    .action(makeCommand(async () => {
+        await Commands.login();
         process.exit(0);
-    });
+    }));
 
 program
     .command('logout')
     .description('Removes any current authentication for Blockware Cloud.')
-    .action(async () => {
+    .action(makeCommand(async () => {
         await Commands.logout();
         process.exit(0);
-    });
+    }));
 
 program
     .command('identity-list')
     .description('Lists all available identities.')
-    .action(async () => {
+    .action(makeCommand(async () => {
         await Commands.listIdentities();
         process.exit(0);
-    });
+    }));
 
 program
     .command('whoami')
     .description('Get current identity.')
-    .action(async () => {
+    .action(makeCommand(async () => {
         await Commands.showCurrentIdentity();
         process.exit(0);
-    });
+    }));
 
 program
     .command('use [identity]')
     .description('Change to identity.')
-    .action(async (username) => {
+    .action(makeCommand(async (username) => {
         await Commands.setCurrentIdentity(username);
         process.exit(0);
-    });
+    }));
 
 program
     .command('init-defaults')
     .description('Installs default commands.')
-    .action(() => {
+    .action(makeCommand(() => {
         console.log('Ensuring default commands...');
         Commands.ensureCommands();
         process.exit(0);
-    });
+    }));
 
 const commands = Commands.getCommands();
 

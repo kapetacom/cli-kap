@@ -2,25 +2,18 @@ const FS = require('fs');
 const mkdirp = require("mkdirp");
 const Path = require('path');
 const inquirer = require('inquirer');
-const request = require('request');
+const open = require('open');
+const jwt_decode = require('jwt-decode');
+const Paths = require('./paths');
+
 
 const NPM = require('@blockware/npm-package-handler');
-const ClusterConfiguration = require('@blockware/local-cluster-config');
+const BlockwareAPI = require('./BlockwareAPI');
 
-const BASEDIR_BLOCKWARE = ClusterConfiguration.getBlockwareBasedir();
-const BASEDIR_USER = Path.join(BASEDIR_BLOCKWARE, 'blockctl');
-const USER_COMMANDS = BASEDIR_USER + '/commands.json';
 
-const BASEDIR_COMMANDS = Path.join(__dirname, '../commands');
-const DEFAULT_COMMANDS = Path.normalize(__dirname + '/../default-commands.json');
-
-const PATHS = [
-    USER_COMMANDS,
-    DEFAULT_COMMANDS
-];
 
 function getCommandPath(commandName) {
-    return Path.join(BASEDIR_COMMANDS, commandName);
+    return Path.join(Paths.BASEDIR_COMMANDS, commandName);
 }
 
 function getPackageJSON(commandName) {
@@ -39,26 +32,26 @@ class Commands {
     }
     
     _ensureBaseDirs() {
-        if (!FS.existsSync(BASEDIR_COMMANDS)) {
-            mkdirp.sync(BASEDIR_COMMANDS);
+        if (!FS.existsSync(Paths.BASEDIR_COMMANDS)) {
+            mkdirp.sync(Paths.BASEDIR_COMMANDS);
         }
 
-        if (!FS.existsSync(BASEDIR_COMMANDS)) {
-            mkdirp.sync(BASEDIR_COMMANDS);
+        if (!FS.existsSync(Paths.BASEDIR_COMMANDS)) {
+            mkdirp.sync(Paths.BASEDIR_COMMANDS);
         }
 
-        if (!FS.existsSync(BASEDIR_USER)) {
-            mkdirp.sync(BASEDIR_USER);
+        if (!FS.existsSync(Paths.BASEDIR_USER)) {
+            mkdirp.sync(Paths.BASEDIR_USER);
         }
     }
 
     _writeUserCommands() {
-        FS.writeFileSync(USER_COMMANDS, JSON.stringify(this._commands, null, 2));
+        FS.writeFileSync(Paths.USER_COMMANDS, JSON.stringify(this._commands, null, 2));
     }
 
     ensureCommands() {
-        for(var i = 0; i < PATHS.length; i++) {
-            const path = PATHS[i];
+        for(var i = 0; i < Paths.ALL_COMMANDS.length; i++) {
+            const path = Paths.ALL_COMMANDS[i];
             if (!FS.existsSync(path)) {
                 continue;
             }
@@ -176,11 +169,11 @@ class Commands {
     }
     
     getCommands() {
-        return FS.readdirSync(BASEDIR_COMMANDS)
+        return FS.readdirSync(Paths.BASEDIR_COMMANDS)
     }
     
     getCommandInfo(commandName) {
-        const commandInfo = require(Path.join(BASEDIR_COMMANDS, commandName, 'package.json'));
+        const commandInfo = require(Path.join(Paths.BASEDIR_COMMANDS, commandName, 'package.json'));
 
         if (!commandInfo.command) {
             commandInfo.command = commandName;
@@ -193,70 +186,75 @@ class Commands {
         return commandInfo;
     }
 
-    async login(username) {
+    async login() {
+        const me = this;
         const questions = [];
-
-        if (!username) {
-            questions.push({
-                type: 'input',
-                name: 'username',
-                message: 'Your Blockware user handle or a registered e-mail address'
-            });
-        }
-
-        questions.push({
-            type: 'password',
-            name: 'password',
-            message: 'Your password'
-        });
 
         questions.push({
             type: 'input',
             name: 'service',
             message: 'The url to the blockware IAM service you want to authenticate against',
-            default: 'http://localhost:5940'
+            default: 'http://localhost:5005'
         });
 
         const answers = await inquirer.prompt(questions);
 
-        return new Promise((resolve) => {
+        const api = new BlockwareAPI({
+            base_url: answers.service
+        });
 
-            const opts = {
-                url: answers.service + '/oauth2/authorize',
-                headers: {
-                    'content-type': 'application/json'
-                },
-                method: 'POST',
-                body: JSON.stringify({
-                    type: 'password',
-                    data: {
-                        username: answers.username || username,
-                        password: answers.password
+        let {
+            device_code,
+            verification_uri_complete,
+            expires_in,
+            interval,
+        } = await api.createDeviceCode();
+
+        console.log('Open the following url in your browser to complete verification: ');
+        console.log('\t' + verification_uri_complete);
+        console.log('');
+
+        open(verification_uri_complete);
+
+        if (!interval || interval < 5) {
+            interval = 5;
+        }
+
+        const expireTime = Date.now() + (expires_in * 1000);
+
+
+        return new Promise((resolve, reject) => {
+
+            function tryAuthorize() {
+                setTimeout(async () => {
+
+                    if (expireTime < Date.now()) {
+                        //Expired
+                        reject(new Error('You failed to complete verification in time. Please try again'));
+                        return;
                     }
-                })
-            };
 
-            request(opts, (err, response, responseBody) => {
-                if (err) {
-                    console.error('Failed to authenticate: ' + err);
-                    resolve();
-                    return;
-                }
+                    try {
+                        const token = await api.authorize({
+                            grant_type:'urn:ietf:params:oauth:grant-type:device_code',
+                            device_code
+                        });
 
-                if (response.statusCode > 299) {
-                    const errorBody = JSON.parse(responseBody);
-                    console.error('Failed to authenticate: ' + errorBody.error);
-                    resolve();
-                    return;
-                }
+                        //We need to save the specific time
+                        api.saveToken(token);
 
-                const {access_token} = JSON.parse(responseBody);
+                        console.log('Authenticated successfully!');
 
-                if (access_token) {
-                    console.log('Authenticated!', responseBody);
-                    resolve();
-                }
-            });
+                        await me.showCurrentIdentity();
+
+                        resolve();
+                    } catch (e) {
+                        tryAuthorize();
+                    }
+                }, interval * 1000);
+            }
+
+            tryAuthorize();
         });
     }
 
@@ -266,6 +264,18 @@ class Commands {
 
     async showCurrentIdentity() {
 
+        const api = new BlockwareAPI();
+
+        const identity = await api.getCurrentIdentity()
+
+        if (!identity) {
+            console.error('Could not find identity [%s]', api.getUserInfo()?.sub);
+            return;
+        }
+        console.log('\n------------------------------------------------');
+        console.log('Name: %s', identity.name);
+        console.log('Handle: %s', identity.handle);
+        console.log('------------------------------------------------\n\n');
     }
 
     async useIdentity(handle) {
@@ -273,7 +283,10 @@ class Commands {
     }
 
     async logout() {
-
+        const api = new BlockwareAPI();
+        if (api.removeToken()) {
+            console.log('Logged out');
+        }
     }
 
 }
