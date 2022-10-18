@@ -41,23 +41,63 @@ class BlockwareAPI {
         })
     }
 
-    async getCurrentIdentity() {
+    getCurrentIdentityId() {
         if (this._userInfo?.sub) {
-            return this.getIdentity(this._userInfo.sub);
+            return this._userInfo.sub;
         }
         throw new Error('No current identity');
     }
 
+    async getCurrentIdentity() {
+        return this.getIdentity(this.getCurrentIdentityId());
+    }
+
+    async getCurrentContext() {
+        return this._authInfo.context;
+    }
+
     async getIdentity(identityId) {
+        return this._sendAuthed(`/identities/${encodeURIComponent(identityId)}`);
+    }
+
+    async getCurrentMemberships() {
+        return this.getMemberships(this.getCurrentIdentityId());
+    }
+
+    async getMemberships(identityId) {
+        return this._sendAuthed(`/identities/${encodeURIComponent(identityId)}/memberships?type=organisation`);
+    }
+
+    async getByHandle(handle) {
+        return this._sendAuthed(`/identities/by-handle/${encodeURIComponent(handle)}/as-member`);
+    }
+
+    async removeContext() {
+        this._authInfo.context = null;
+        this._updateToken();
+    }
+
+    async switchContextTo(handle) {
+        const membership = await this.getByHandle(handle);
+        if (!membership) {
+            throw {error:'Organisation not found'};
+        }
+        this._authInfo.context = membership;
+        this._updateToken();
+        return membership;
+    }
+
+    async _sendAuthed(path, method = 'GET', body) {
+        const url = `${this._authInfo.base_url}/api${path}`;
         const accessToken = await this.getAccessToken();
-        const url = `${this._authInfo.base_url}/api/identities/${identityId}`;
         return this._send({
             url,
             headers: {
                 'authorization': `Bearer ${accessToken}`,
                 'accept': 'application/json'
             },
-            method: 'GET'
+            method: method,
+            body
         })
     }
 
@@ -99,7 +139,11 @@ class BlockwareAPI {
                 }
 
                 if (response.statusCode > 299) {
-                    const errorBody = JSON.parse(responseBody);
+                    if (response.statusCode === 404) {
+                        resolve(null);
+                        return;
+                    }
+                    const errorBody = responseBody ? JSON.parse(responseBody) : {error:'Not found', status: response.statusCode};
                     reject(errorBody);
                     return;
                 }
@@ -107,7 +151,7 @@ class BlockwareAPI {
                 try {
                     resolve(JSON.parse(responseBody));
                 } catch (e) {
-                    console.log('response', responseBody);
+                    console.log('response', response, responseBody);
                     reject(e);
                 }
             })
@@ -130,10 +174,16 @@ class BlockwareAPI {
         this._authInfo = {
             ...token,
             base_url:this._authInfo.base_url,
+            context: null,
             expire_time: Date.now() + token.expires_in
         };
+        this._updateToken();
+    }
+
+    _updateToken() {
         FS.writeFileSync(Paths.AUTH_TOKEN, JSON.stringify(this._authInfo, null, 2));
     }
+
 }
 
 module.exports = BlockwareAPI;

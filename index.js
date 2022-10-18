@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const program = require('./src/commander');
+const {program} = require('commander');
 const packageData = require('./package.json');
 const Commands = require('./src/commands');
 
@@ -84,8 +84,8 @@ program
     }));
 
 program
-    .command('identity-list')
-    .description('Lists all available identities.')
+    .command('organisations')
+    .description('Lists all available organisations.')
     .action(makeCommand(async () => {
         await Commands.listIdentities();
         process.exit(0);
@@ -93,17 +93,17 @@ program
 
 program
     .command('whoami')
-    .description('Get current identity.')
+    .description('Get current identity and organisation.')
     .action(makeCommand(async () => {
         await Commands.showCurrentIdentity();
         process.exit(0);
     }));
 
 program
-    .command('use [identity]')
-    .description('Change to identity.')
-    .action(makeCommand(async (username) => {
-        await Commands.setCurrentIdentity(username);
+    .command('use [handle]')
+    .description('Change to organisation.')
+    .action(makeCommand(async (handle) => {
+        await Commands.useOrganisation(handle);
         process.exit(0);
     }));
 
@@ -122,13 +122,20 @@ if (commands.length > 0) {
     commands.forEach((commandId) => {
         try {
             const commandInfo = Commands.getCommandInfo(commandId);
-            program.command(commandInfo.command, commandInfo.description);
+            program.command(
+                commandInfo.command,
+                commandInfo.description,
+                { executableFile: commandInfo.executable }
+            );
         } catch(e) {
             console.error('Failed to load command: %s', commandId, e.stack);
         }
     });
 }
 
+
+
+if (process.argv.length < 3) {
 
 console.log(`
 
@@ -140,9 +147,6 @@ console.log(`
 
                                                   
 `);
-
-if (process.argv.length < 3) {
-    console.error('No command specified\n');
     program.help();
     process.exit(1);
 }

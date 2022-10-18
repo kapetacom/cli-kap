@@ -173,7 +173,14 @@ class Commands {
     }
     
     getCommandInfo(commandName) {
-        const commandInfo = require(Path.join(Paths.BASEDIR_COMMANDS, commandName, 'package.json'));
+        const basePath = Path.join(Paths.BASEDIR_COMMANDS, commandName);
+        const commandInfo = require(Path.join(basePath, 'package.json'));
+
+        if (!commandInfo.main) {
+            commandInfo.main = 'index.js';
+        }
+
+        commandInfo.executable = Path.join(basePath,'index.js');
 
         if (!commandInfo.command) {
             commandInfo.command = commandName;
@@ -259,7 +266,21 @@ class Commands {
     }
 
     async listIdentities() {
+        const api = new BlockwareAPI();
+        const memberships = await api.getCurrentMemberships();
+        const context = await api.getCurrentContext()
 
+        console.log('\n------------------------------------------------');
+        memberships.forEach(membership => {
+            const isCurrent = !!(context && context.identity.id === membership.identity.id);
+            if (isCurrent) {
+                console.log('* %s [%s] (Current context)', membership.identity.handle, membership.identity.name);
+            } else {
+                console.log('- %s [%s]', membership.identity.handle, membership.identity.name);
+            }
+        });
+
+        console.log('------------------------------------------------\n\n');
     }
 
     async showCurrentIdentity() {
@@ -267,6 +288,7 @@ class Commands {
         const api = new BlockwareAPI();
 
         const identity = await api.getCurrentIdentity()
+        const context = await api.getCurrentContext()
 
         if (!identity) {
             console.error('Could not find identity [%s]', api.getUserInfo()?.sub);
@@ -275,12 +297,26 @@ class Commands {
         console.log('\n------------------------------------------------');
         console.log('Name: %s', identity.name);
         console.log('Handle: %s', identity.handle);
+        if (context) {
+            console.log('Organisation: %s [%s]', context.identity.name, context.identity.handle);
+        } else {
+            console.log('Organisation: none');
+        }
         console.log('------------------------------------------------\n\n');
     }
 
-    async useIdentity(handle) {
-
+    async useOrganisation(handle) {
+        const api = new BlockwareAPI();
+        if (handle) {
+            const membership = await api.switchContextTo(handle);
+            console.log('Switched context to organisation: %s', membership.identity.name);
+        } else {
+            await api.removeContext();
+            console.log('Switched context to user');
+        }
     }
+
+
 
     async logout() {
         const api = new BlockwareAPI();
