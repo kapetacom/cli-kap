@@ -65,7 +65,7 @@ class BlockwareAPI {
     }
 
     async getMemberships(identityId) {
-        return this._sendAuthed(`/identities/${encodeURIComponent(identityId)}/memberships?type=organisation`);
+        return this._sendAuthed(`/identities/${encodeURIComponent(identityId)}/memberships?type=organization`);
     }
 
     async getByHandle(handle) {
@@ -80,7 +80,7 @@ class BlockwareAPI {
     async switchContextTo(handle) {
         const membership = await this.getByHandle(handle);
         if (!membership) {
-            throw {error:'Organisation not found'};
+            throw {error:'Organization not found'};
         }
         this._authInfo.context = membership;
         this._updateToken();

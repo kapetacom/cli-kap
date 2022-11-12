@@ -84,8 +84,8 @@ program
     }));
 
 program
-    .command('organisations')
-    .description('Lists all available organisations.')
+    .command('organizations')
+    .description('Lists all available organizations.')
     .action(makeCommand(async () => {
         await Commands.listIdentities();
         process.exit(0);
@@ -93,7 +93,7 @@ program
 
 program
     .command('whoami')
-    .description('Get current identity and organisation.')
+    .description('Get current identity and organization.')
     .action(makeCommand(async () => {
         await Commands.showCurrentIdentity();
         process.exit(0);
@@ -101,9 +101,9 @@ program
 
 program
     .command('use [handle]')
-    .description('Change to organisation.')
+    .description('Change to organization.')
     .action(makeCommand(async (handle) => {
-        await Commands.useOrganisation(handle);
+        await Commands.useOrganization(handle);
         process.exit(0);
     }));
 

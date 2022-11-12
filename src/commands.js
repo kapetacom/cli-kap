@@ -298,18 +298,18 @@ class Commands {
         console.log('Name: %s', identity.name);
         console.log('Handle: %s', identity.handle);
         if (context) {
-            console.log('Organisation: %s [%s]', context.identity.name, context.identity.handle);
+            console.log('Organization: %s [%s]', context.identity.name, context.identity.handle);
         } else {
-            console.log('Organisation: none');
+            console.log('Organization: none');
         }
         console.log('------------------------------------------------\n\n');
     }
 
-    async useOrganisation(handle) {
+    async useOrganization(handle) {
         const api = new BlockwareAPI();
         if (handle) {
             const membership = await api.switchContextTo(handle);
-            console.log('Switched context to organisation: %s', membership.identity.name);
+            console.log('Switched context to organization: %s', membership.identity.name);
         } else {
             await api.removeContext();
             console.log('Switched context to user');
