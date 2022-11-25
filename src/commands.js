@@ -201,7 +201,7 @@ class Commands {
             type: 'input',
             name: 'service',
             message: 'The url to the blockware IAM service you want to authenticate against',
-            default: 'http://localhost:5005'
+            default: 'http://localhost:5010'
         });
 
         const answers = await inquirer.prompt(questions);

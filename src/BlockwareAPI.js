@@ -151,7 +151,6 @@ class BlockwareAPI {
                 try {
                     resolve(JSON.parse(responseBody));
                 } catch (e) {
-                    console.log('response', response, responseBody);
                     reject(e);
                 }
             })
