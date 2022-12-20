@@ -2,6 +2,7 @@
 const {program} = require('commander');
 const packageData = require('./package.json');
 const Commands = require('./src/commands');
+const BlockwareAPI = require("./src/BlockwareAPI");
 
 function handleError(err) {
     if (err.error) {
@@ -116,39 +117,49 @@ program
         process.exit(0);
     }));
 
-const commands = Commands.getCommands();
+(async function() {
+    const api = new BlockwareAPI();
+    if (api.hasToken()) {
+        //Make sure our access token is up to date
+        await api.ensureAccessToken();
 
-if (commands.length > 0) {
-    commands.forEach((commandId) => {
-        try {
-            const commandInfo = Commands.getCommandInfo(commandId);
-            program.command(
-                commandInfo.command,
-                commandInfo.description,
-                { executableFile: commandInfo.executable }
-            );
-        } catch(e) {
-            console.error('Failed to load command: %s', commandId, e.stack);
-        }
-    });
-}
+        //We pass the path to the authentication file down to the sub commands
+        process.env.BLOCKWARE_CREDENTIALS = api.getTokenPath();
+    }
 
 
+    const commands = Commands.getCommands();
 
-if (process.argv.length < 3) {
+    if (commands.length > 0) {
+        commands.forEach((commandId) => {
+            try {
+                const commandInfo = Commands.getCommandInfo(commandId);
+                program.command(
+                    commandInfo.command,
+                    commandInfo.description,
+                    { executableFile: commandInfo.executable }
+                );
+            } catch(e) {
+                console.error('Failed to load command: %s', commandId, e.stack);
+            }
+        });
+    }
 
-console.log(`
+    if (process.argv.length < 3) {
 
-  ____  _            _                            
- | __ )| | ___   ___| | ____      ____ _ _ __ ___ 
- |  _ \\| |/ _ \\ / __| |/ /\\ \\ /\\ / / _\` | '__/ _ \\
- | |_) | | (_) | (__|   <  \\ V  V / (_| | | |  __/
- |____/|_|\\___/ \\___|_|\\_\\  \\_/\\_/ \\__,_|_|  \\___|
+    console.log(`
+    
+      ____  _            _                            
+     | __ )| | ___   ___| | ____      ____ _ _ __ ___ 
+     |  _ \\| |/ _ \\ / __| |/ /\\ \\ /\\ / / _\` | '__/ _ \\
+     | |_) | | (_) | (__|   <  \\ V  V / (_| | | |  __/
+     |____/|_|\\___/ \\___|_|\\_\\  \\_/\\_/ \\__,_|_|  \\___|
+    
+                                                      
+    `);
+        program.help();
+        process.exit(1);
+    }
 
-                                                  
-`);
-    program.help();
-    process.exit(1);
-}
-
-program.parse(process.argv);
+    program.parse(process.argv);
+}());

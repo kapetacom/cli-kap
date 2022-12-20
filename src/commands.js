@@ -229,7 +229,6 @@ class Commands {
 
         const expireTime = Date.now() + (expires_in * 1000);
 
-
         return new Promise((resolve, reject) => {
 
             function tryAuthorize() {

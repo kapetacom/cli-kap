@@ -19,9 +19,17 @@ class BlockwareAPI {
         return this._userInfo;
     }
 
+    hasToken() {
+        return this._authInfo && this._authInfo.access_token;
+    }
+
+    getTokenPath() {
+        return Paths.AUTH_TOKEN;
+    }
+
     readToken() {
-        if (FS.existsSync(Paths.AUTH_TOKEN)) {
-            this._authInfo = JSON.parse(FS.readFileSync(Paths.AUTH_TOKEN).toString());
+        if (FS.existsSync(this.getTokenPath())) {
+            this._authInfo = JSON.parse(FS.readFileSync(this.getTokenPath()).toString());
             this._userInfo = jwt_decode(this._authInfo.access_token);
         }
     }
@@ -101,7 +109,11 @@ class BlockwareAPI {
         })
     }
 
-    async getAccessToken() {
+    async ensureAccessToken() {
+        if (!this._authInfo) {
+            throw new Error('Not authenticated');
+        }
+
         if (this._authInfo.expire_time < Date.now()) {
             const token = await this.authorize({
                 grant_type: 'refresh_token',
@@ -109,6 +121,10 @@ class BlockwareAPI {
             });
             this.saveToken(token);
         }
+    }
+
+    async getAccessToken() {
+        await this.ensureAccessToken();
 
         return this._authInfo.access_token;
     }
@@ -158,8 +174,8 @@ class BlockwareAPI {
     }
 
     removeToken() {
-        if (FS.existsSync(Paths.AUTH_TOKEN)) {
-            FS.unlinkSync(Paths.AUTH_TOKEN);
+        if (FS.existsSync(this.getTokenPath())) {
+            FS.unlinkSync(this.getTokenPath());
             this._authInfo = {
                 base_url:this._authInfo.base_url
             };
@@ -180,7 +196,7 @@ class BlockwareAPI {
     }
 
     _updateToken() {
-        FS.writeFileSync(Paths.AUTH_TOKEN, JSON.stringify(this._authInfo, null, 2));
+        FS.writeFileSync(this.getTokenPath(), JSON.stringify(this._authInfo, null, 2));
     }
 
 }
