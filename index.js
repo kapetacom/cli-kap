@@ -125,6 +125,9 @@ program
 
         //We pass the path to the authentication file down to the sub commands
         process.env.BLOCKWARE_CREDENTIALS = api.getTokenPath();
+
+        //We also pass the used blockctl down
+        process.env.BLOCKWARE_BLOCKCTL_PATH = process.argv[0];
     }
 
 
