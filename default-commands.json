@@ -1,8 +1,6 @@
 {
-    "gui": "@blockware/blockctl-command-gui",
     "codegen": "@blockware/blockctl-command-codegen",
     "local-cluster": "@blockware/blockctl-command-local-cluster",
     "run": "@blockware/blockctl-command-run",
-    "providers": "@blockware/blockctl-command-providers",
     "registry": "@blockware/blockctl-command-registry"
 }
