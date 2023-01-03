@@ -16,7 +16,8 @@ jobs:
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
-      - run: npm install
+      - run: echo '@blockware:registry=${{ secrets.GCP_ARTIFACT_NPM_URL }}' > .npmrc
+      - run: npm install --ignore-scripts
       - run: npm publish
         env:
           CI: true
