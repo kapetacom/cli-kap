@@ -3,7 +3,6 @@ const mkdirp = require("mkdirp");
 const Path = require('path');
 const inquirer = require('inquirer');
 const open = require('open');
-const jwt_decode = require('jwt-decode');
 const Paths = require('./paths');
 
 
@@ -52,14 +51,21 @@ class Commands {
     ensureCommands() {
         for(var i = 0; i < Paths.ALL_COMMANDS.length; i++) {
             const path = Paths.ALL_COMMANDS[i];
+
             if (!FS.existsSync(path)) {
                 continue;
             }
 
             this._commands = readJSON(path);
 
+            if (Object.keys(this._commands).length < 1) {
+                //Empty
+                continue;
+            }
+
             for(const commandName in this._commands) {
                 if (this._commands.hasOwnProperty(commandName)) {
+
                     const packageName = this._commands[commandName];
                     this.ensure(packageName, commandName, true);
                 }
