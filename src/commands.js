@@ -200,8 +200,8 @@ class Commands {
         questions.push({
             type: 'input',
             name: 'service',
-            message: 'The url to the blockware IAM service you want to authenticate against',
-            default: 'http://localhost:5010'
+            message: 'The url to the blockware service you want to authenticate against',
+            default: new BlockwareAPI().getBaseUrl()
         });
 
         const answers = await inquirer.prompt(questions);
@@ -295,7 +295,8 @@ class Commands {
         }
         console.log('\n------------------------------------------------');
         console.log('Name: %s', identity.name);
-        console.log('Handle: %s', identity.handle);
+        console.log('Type: %s', identity.type);
+        console.log('Handle: %s', identity.handle || 'none');
         if (context) {
             console.log('Organization: %s [%s]', context.identity.name, context.identity.handle);
         } else {

@@ -19,7 +19,22 @@ class BlockwareAPI {
         return this._userInfo;
     }
 
+    hasJWTToken() {
+        return !!process?.env?.BLOCKWARE_CREDENTIALS_TOKEN;
+    }
+
+    getJWTToken() {
+        if (!process?.env?.BLOCKWARE_CREDENTIALS_TOKEN) {
+            return null;
+        }
+        //JWT Provided
+        return JSON.parse(Buffer.from(process.env.BLOCKWARE_CREDENTIALS_TOKEN,'base64').toString('ascii')).token;
+    }
+
     hasToken() {
+        if (this.hasJWTToken()) {
+            return true;
+        }
         return this._authInfo && this._authInfo.access_token;
     }
 
@@ -34,10 +49,22 @@ class BlockwareAPI {
         }
     }
 
+    getBaseUrl() {
+        if (process?.env?.BLOCKWARE_SERVICE_URL) {
+            return process.env.BLOCKWARE_SERVICE_URL;
+        }
+
+        if (this._authInfo?.base_url) {
+            return this._authInfo?.base_url;
+        }
+
+        return 'https://app.blockware.com';
+    }
+
     async createDeviceCode() {
 
         return this._send({
-            url: `${this._authInfo.base_url}/oauth2/device/code`,
+            url: `${this.getBaseUrl()}/oauth2/device/code`,
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
                 'accept': 'application/json'
@@ -96,7 +123,7 @@ class BlockwareAPI {
     }
 
     async _sendAuthed(path, method = 'GET', body) {
-        const url = `${this._authInfo.base_url}/api${path}`;
+        const url = `${this.getBaseUrl()}/api${path}`;
         const accessToken = await this.getAccessToken();
         return this._send({
             url,
@@ -110,11 +137,19 @@ class BlockwareAPI {
     }
 
     async ensureAccessToken() {
-        if (!this._authInfo) {
-            throw new Error('Not authenticated');
+        if (this.hasJWTToken()) {
+            let jwtToken = this.getJWTToken();
+            const token = await this.authorize({
+                grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                assertion: jwtToken
+            });
+            this.saveToken(token);
+            return;
         }
 
-        if (this._authInfo.expire_time < Date.now()) {
+        if (this._authInfo?.expire_time &&
+            this._authInfo?.refresh_token &&
+            this._authInfo.expire_time < Date.now()) {
             const token = await this.authorize({
                 grant_type: 'refresh_token',
                 refresh_token: this._authInfo.refresh_token
@@ -132,7 +167,7 @@ class BlockwareAPI {
     async authorize(payload) {
 
         return this._send({
-            url: `${this._authInfo.base_url}/oauth2/token`,
+            url: `${this.getBaseUrl()}/oauth2/token`,
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
                 'accept': 'application/json'
@@ -177,7 +212,7 @@ class BlockwareAPI {
         if (FS.existsSync(this.getTokenPath())) {
             FS.unlinkSync(this.getTokenPath());
             this._authInfo = {
-                base_url:this._authInfo.base_url
+                base_url: this.getBaseUrl()
             };
             return true;
         }
@@ -188,10 +223,11 @@ class BlockwareAPI {
     saveToken(token) {
         this._authInfo = {
             ...token,
-            base_url:this._authInfo.base_url,
+            base_url:this.getBaseUrl(),
             context: null,
             expire_time: Date.now() + token.expires_in
         };
+        this._userInfo = jwt_decode(this._authInfo.access_token);
         this._updateToken();
     }
 

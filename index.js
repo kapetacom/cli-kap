@@ -130,7 +130,6 @@ program
         process.env.BLOCKWARE_BLOCKCTL_PATH = process.argv[0];
     }
 
-
     const commands = Commands.getCommands();
 
     if (commands.length > 0) {
