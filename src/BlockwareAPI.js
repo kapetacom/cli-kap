@@ -3,7 +3,7 @@ const jwt_decode = require('jwt-decode');
 const Paths = require('./paths');
 const FS = require("fs");
 
-const CLIENT_ID = '634d5f4e1f279556e58cb323';
+const CLIENT_ID = '63bbeafc39388b47691111ae';
 
 class BlockwareAPI {
 
