@@ -5,11 +5,8 @@ const inquirer = require('inquirer');
 const open = require('open');
 const Paths = require('./paths');
 
-
 const NPM = require('@blockware/npm-package-handler');
 const BlockwareAPI = require('./BlockwareAPI');
-
-
 
 function getCommandPath(commandName) {
     return Path.join(Paths.BASEDIR_COMMANDS, commandName);
