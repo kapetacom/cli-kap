@@ -175,6 +175,9 @@ class Commands {
     }
     
     getCommands() {
+        if (!FS.existsSync(Paths.BASEDIR_COMMANDS)) {
+            return []
+        }
         return FS.readdirSync(Paths.BASEDIR_COMMANDS)
     }
     

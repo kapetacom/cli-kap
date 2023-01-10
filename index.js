@@ -120,8 +120,12 @@ program
 (async function() {
     const api = new BlockwareAPI();
     if (api.hasToken()) {
-        //Make sure our access token is up to date
-        await api.ensureAccessToken();
+        try {
+            //Make sure our access token is up to date
+            await api.ensureAccessToken();
+        } catch (e) {
+            console.warn('Failed to refresh access token: ' + e.message)
+        }
 
         //We pass the path to the authentication file down to the sub commands
         process.env.BLOCKWARE_CREDENTIALS = api.getTokenPath();

@@ -4,10 +4,10 @@ const BASEDIR_BLOCKWARE = ClusterConfiguration.getBlockwareBasedir();
 const AUTH_TOKEN = ClusterConfiguration.getAuthenticationPath();
 
 const BASEDIR_USER = Path.join(BASEDIR_BLOCKWARE, 'blockctl');
-const USER_COMMANDS = BASEDIR_USER + '/commands.json';
-const BASEDIR_COMMANDS = Path.join(__dirname, '../commands');
+const USER_COMMANDS = Path.join(BASEDIR_USER , 'commands.json');
+const BASEDIR_COMMANDS = Path.join(BASEDIR_USER, 'commands');
 
-const DEFAULT_COMMANDS = Path.normalize(__dirname + '/../default-commands.json');
+const DEFAULT_COMMANDS = Path.normalize(Path.join(__dirname , '/../default-commands.json'));
 
 const ALL_COMMANDS = [
     USER_COMMANDS,
