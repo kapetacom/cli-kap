@@ -7,7 +7,7 @@ either locally or on servers -
 as well as giving people comfortable with terminals a way to quickly perform
 certain actions.
 
-## Install:
+## Install / Update:
 ```bash
 npm i @blockware/blockctl -g
 ``` 
@@ -17,6 +17,10 @@ npm i @blockware/blockctl -g
 blockctl help
 ``` 
 
+## Remove
+```bash
+npm remove @blockware/blockctl -g
+``` 
 
 ## Structure
 The tool itself is built up of a series of "commands". Each command is
