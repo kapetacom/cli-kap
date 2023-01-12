@@ -3,7 +3,7 @@ const jwt_decode = require('jwt-decode');
 const Paths = require('./paths');
 const FS = require("fs");
 
-const CLIENT_ID = '63bbeafc39388b47691111ae';
+const DEFAULT_CLIENT_ID = '63bbeafc39388b47691111ae';
 
 class BlockwareAPI {
 
@@ -13,6 +13,10 @@ class BlockwareAPI {
         if (!authInfo) {
             this.readToken();
         }
+    }
+
+    getClientId() {
+        return this?._authInfo?.client_id || DEFAULT_CLIENT_ID;
     }
 
     getUserInfo() {
@@ -71,7 +75,7 @@ class BlockwareAPI {
             },
             method: 'POST',
             body: new URLSearchParams({
-                client_id: CLIENT_ID
+                client_id: this.getClientId()
             }).toString()
         })
     }
@@ -175,7 +179,7 @@ class BlockwareAPI {
             method: 'POST',
             body: new URLSearchParams({
                 ...payload,
-                client_id: CLIENT_ID
+                client_id: this.getClientId()
             }).toString()
         })
     }
@@ -223,6 +227,7 @@ class BlockwareAPI {
     saveToken(token) {
         this._authInfo = {
             ...token,
+            client_id: this.getClientId(),
             base_url:this.getBaseUrl(),
             context: null,
             expire_time: Date.now() + token.expires_in

@@ -210,10 +210,18 @@ class Commands {
             default: new BlockwareAPI().getBaseUrl()
         });
 
+        questions.push({
+            type: 'input',
+            name: 'client_id',
+            message: 'The OAuth Client ID to authenticate using. Leave as default for most use cases.',
+            default: new BlockwareAPI().getClientId()
+        });
+
         const answers = await inquirer.prompt(questions);
 
         const api = new BlockwareAPI({
-            base_url: answers.service
+            base_url: answers.service,
+            client_id: answers.client_id
         });
 
         let {
