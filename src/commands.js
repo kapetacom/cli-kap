@@ -2,10 +2,10 @@ const FS = require('fs');
 const mkdirp = require("mkdirp");
 const Path = require('path');
 const inquirer = require('inquirer');
-const Paths = require('./paths');
-
+const open = require('open');
 const NPM = require('@blockware/npm-package-handler');
 const {BlockwareAPI} = require('@blockware/nodejs-api-client');
+const Paths = require('./paths');
 
 function getCommandPath(commandName) {
     return Path.join(Paths.BASEDIR_COMMANDS, commandName);
@@ -228,6 +228,8 @@ class Commands {
                 console.log('Open the following url in your browser to complete verification: ');
                 console.log('\t' + verification_uri_complete);
                 console.log('');
+
+                open(verification_uri_complete);
             }
         })
         console.log('Authenticated successfully!');
