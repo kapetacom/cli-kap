@@ -2,7 +2,7 @@
 const {program} = require('commander');
 const packageData = require('./package.json');
 const Commands = require('./src/commands');
-const BlockwareAPI = require("./src/BlockwareAPI");
+const {BlockwareAPI} = require('@blockware/nodejs-api-client');
 
 function handleError(err) {
     if (err.error) {

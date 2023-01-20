@@ -2,11 +2,10 @@ const FS = require('fs');
 const mkdirp = require("mkdirp");
 const Path = require('path');
 const inquirer = require('inquirer');
-const open = require('open');
 const Paths = require('./paths');
 
 const NPM = require('@blockware/npm-package-handler');
-const BlockwareAPI = require('./BlockwareAPI');
+const {BlockwareAPI} = require('@blockware/nodejs-api-client');
 
 function getCommandPath(commandName) {
     return Path.join(Paths.BASEDIR_COMMANDS, commandName);
@@ -224,58 +223,16 @@ class Commands {
             client_id: answers.client_id
         });
 
-        let {
-            device_code,
-            verification_uri_complete,
-            expires_in,
-            interval,
-        } = await api.createDeviceCode();
-
-        console.log('Open the following url in your browser to complete verification: ');
-        console.log('\t' + verification_uri_complete);
-        console.log('');
-
-        open(verification_uri_complete);
-
-        if (!interval || interval < 5) {
-            interval = 5;
-        }
-
-        const expireTime = Date.now() + (expires_in * 1000);
-
-        return new Promise((resolve, reject) => {
-
-            function tryAuthorize() {
-                setTimeout(async () => {
-
-                    if (expireTime < Date.now()) {
-                        //Expired
-                        reject(new Error('You failed to complete verification in time. Please try again'));
-                        return;
-                    }
-
-                    try {
-                        const token = await api.authorize({
-                            grant_type:'urn:ietf:params:oauth:grant-type:device_code',
-                            device_code
-                        });
-
-                        //We need to save the specific time
-                        api.saveToken(token);
-
-                        console.log('Authenticated successfully!');
-
-                        await me.showCurrentIdentity();
-
-                        resolve();
-                    } catch (e) {
-                        tryAuthorize();
-                    }
-                }, interval * 1000);
+        await api.doDeviceAuthentication({
+            onVerificationCode: (verification_uri_complete) => {
+                console.log('Open the following url in your browser to complete verification: ');
+                console.log('\t' + verification_uri_complete);
+                console.log('');
             }
+        })
+        console.log('Authenticated successfully!');
 
-            tryAuthorize();
-        });
+        await me.showCurrentIdentity();
     }
 
     async listIdentities() {
