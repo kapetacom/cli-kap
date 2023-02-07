@@ -112,7 +112,6 @@ program
     .command('init-defaults')
     .description('Installs default commands.')
     .action(makeCommand(() => {
-        console.log('Ensuring default commands...');
         Commands.ensureCommands();
         process.exit(0);
     }));

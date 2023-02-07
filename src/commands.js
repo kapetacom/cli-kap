@@ -45,23 +45,25 @@ class Commands {
     }
 
     ensureCommands() {
-        for(var i = 0; i < Paths.ALL_COMMANDS.length; i++) {
+        console.log('Ensuring %s default commands...', Paths.ALL_COMMANDS.length);
+        for(let i = 0; i < Paths.ALL_COMMANDS.length; i++) {
             const path = Paths.ALL_COMMANDS[i];
 
             if (!FS.existsSync(path)) {
+                console.log('Skipping commands because it does not exist: ', path);
                 continue;
             }
 
             this._commands = readJSON(path);
 
             if (Object.keys(this._commands).length < 1) {
+                console.log('Skipping commands because it was empty: ', path);
                 //Empty
                 continue;
             }
 
             for(const commandName in this._commands) {
                 if (this._commands.hasOwnProperty(commandName)) {
-
                     const packageName = this._commands[commandName];
                     this.ensure(packageName, commandName, true);
                 }
