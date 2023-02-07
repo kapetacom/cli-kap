@@ -25,6 +25,9 @@ jobs:
           npm config set @blockware:registry ${{ secrets.GCP_ARTIFACT_NPM_URL }}
           npm install
 
-      - name: Run init-defaults
+      - name: Test for registry
         run: |
-          ./bin/blockctl init-defaults
+          ./bin/blockctl | grep "Push and pull" || exit 1
+      - name: Test for codegen
+        run: |
+          ./bin/blockctl | grep "codegen" || exit 1
