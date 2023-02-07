@@ -65,7 +65,7 @@ class Commands {
             for(const commandName in this._commands) {
                 if (this._commands.hasOwnProperty(commandName)) {
                     const packageName = this._commands[commandName];
-                    this.ensure(packageName, commandName, true);
+                    this.ensure(packageName, commandName);
                 }
             }
 
