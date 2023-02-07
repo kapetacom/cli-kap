@@ -26,8 +26,12 @@ jobs:
           npm install
 
       - name: Test for registry
-        run: |
-          node ./bin/blockctl | grep "Push and pull" || exit 1
+        run: node ./bin/blockctl | grep "Push and pull" || exit 1
       - name: Test for codegen
-        run: |
-          node ./bin/blockctl | grep "codegen" || exit 1
+        run: node ./bin/blockctl | grep "codegen" || exit 1
+      - name: Init defaults for registry
+        run: node ./bin/blockctl registry init-defaults
+      - name: Verify frontend for registry
+        run: node ./bin/blockctl registry ls | grep "core/block-type\[blockware/block-type-frontend" || exit 1
+      - name: Verify service for registry
+        run: node ./bin/blockctl registry ls | grep "core/block-type\[blockware/block-type-service" || exit 1
