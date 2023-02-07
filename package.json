@@ -9,7 +9,7 @@
         "blockctl": "bin/blockctl"
     },
     "scripts": {
-        "postinstall": "./bin/blockctl init-defaults"
+        "postinstall": "node ./bin/blockctl init-defaults"
     },
     "dependencies": {
         "@blockware/local-cluster-config": "<2",
