@@ -11,7 +11,7 @@ const CI_COMMANDS = Path.normalize(Path.join(__dirname , '/../ci-commands.json')
 
 const ALL_COMMANDS = [
     USER_COMMANDS,
-    process.env.CI ? CI_COMMANDS : DEFAULT_COMMANDS
+    process.env.BLOCKWARE_CI ? CI_COMMANDS : DEFAULT_COMMANDS
 ];
 
 module.exports = {

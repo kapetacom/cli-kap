@@ -16,4 +16,4 @@ jobs:
       - run: echo '@blockware:registry=${{ secrets.GCP_ARTIFACT_NPM_URL }}' > .npmrc
       - run: npm install
         env:
-          CI: true
+          BLOCKWARE_CI: true
