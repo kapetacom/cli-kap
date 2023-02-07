@@ -1,0 +1,30 @@
+name: Onboarding Test
+
+on: [workflow_dispatch]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Install Node.js and NPM
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: npm install
+        run: |
+          echo '@blockware:registry=${{ secrets.GCP_ARTIFACT_NPM_URL }}' > .npmrc
+          npm install
+
+      - name: Run init-defaults
+        run: |
+          ./bin/blockctl init-defaults
