@@ -44,8 +44,7 @@ class Commands {
         FS.writeFileSync(Paths.USER_COMMANDS, JSON.stringify(this._commands, null, 2));
     }
 
-    ensureCommands() {
-        console.log('Ensuring %s default commands...', Paths.ALL_COMMANDS.length);
+    _loadCommands() {
         for(let i = 0; i < Paths.ALL_COMMANDS.length; i++) {
             const path = Paths.ALL_COMMANDS[i];
 
@@ -54,25 +53,30 @@ class Commands {
                 continue;
             }
 
-            this._commands = readJSON(path);
 
-            if (Object.keys(this._commands).length < 1) {
+            const commands = readJSON(path);
+            if (Object.keys(commands).length < 1) {
                 console.log('Skipping commands because it was empty: ', path);
                 //Empty
                 continue;
             }
 
-            for(const commandName in this._commands) {
-                if (this._commands.hasOwnProperty(commandName)) {
-                    const packageName = this._commands[commandName];
-                    this.ensure(packageName, commandName);
-                }
-            }
+            this._commands = commands;
 
             break;
         }
-
         this._writeUserCommands();
+    }
+
+    ensureCommands() {
+        this._loadCommands();
+        console.log('Ensuring %s default commands...', Object.keys(this._commands).length);
+        for(const commandName in this._commands) {
+            if (this._commands.hasOwnProperty(commandName)) {
+                const packageName = this._commands[commandName];
+                this.ensure(packageName, commandName);
+            }
+        }
     }
 
     install(packageName, commandName) {
@@ -128,6 +132,16 @@ class Commands {
         npm.upgrade(packageJson.name);
 
         console.log('-- Upgraded command %s from %s', commandName, packageJson.name);
+    }
+
+    upgradeAll() {
+        this._loadCommands();
+        console.log(Object.keys(this._commands));
+        for(const commandName in this._commands) {
+            if (this._commands.hasOwnProperty(commandName)) {
+                this.upgrade(commandName);
+            }
+        }
     }
 
     link(commandName) {
