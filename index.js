@@ -61,10 +61,14 @@ program
     }));
 
 program
-    .command('upgrade <command-name>')
-    .description('Upgrades an existing command by installing the latest from the NPM registry.')
+    .command('upgrade [command-name]')
+    .description('Upgrades all commands - or specific command if specified')
     .action(makeCommand((commandName) => {
-        Commands.upgrade(commandName);
+        if (commandName) {
+            Commands.upgrade(commandName);
+        } else {
+            Commands.upgradeAll();
+        }
         process.exit(0);
     }));
 
