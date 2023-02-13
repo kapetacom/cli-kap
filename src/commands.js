@@ -136,7 +136,6 @@ class Commands {
 
     upgradeAll() {
         this._loadCommands();
-        console.log(Object.keys(this._commands));
         for(const commandName in this._commands) {
             if (this._commands.hasOwnProperty(commandName)) {
                 this.upgrade(commandName);
