@@ -1,10 +1,10 @@
 {
-    "name": "@blockware/blockctl",
-    "version": "0.0.46",
-    "description": "Blockware Command Line Utility",
+    "name": "@kapeta/blockctl",
+    "version": "0.0.48",
+    "description": "Kapeta Command Line Utility",
     "main": "index.js",
     "license": "MIT",
-    "author": "Henrik Hofmeister <hh@blockware.com>",
+    "author": "Henrik Hofmeister <hh@kapeta.com>",
     "bin": {
         "blockctl": "bin/blockctl"
     },
@@ -12,9 +12,9 @@
         "postinstall": "node ./bin/blockctl init-defaults"
     },
     "dependencies": {
-        "@blockware/local-cluster-config": "<2",
-        "@blockware/npm-package-handler": "<2",
-        "@blockware/nodejs-api-client": "<2",
+        "@kapeta/local-cluster-config": "<2",
+        "@kapeta/npm-package-handler": "<2",
+        "@kapeta/nodejs-api-client": "<2",
         "commander": "^9.4.1",
         "inquirer": "^7.2.0",
         "jwt-decode": "^3.1.2",

@@ -9,7 +9,7 @@ certain actions.
 
 ## Install / Update:
 ```bash
-npm i @blockware/blockctl -g
+npm i @kapeta/blockctl -g
 ``` 
 
 ## Use:
@@ -19,7 +19,7 @@ blockctl help
 
 ## Remove
 ```bash
-npm remove @blockware/blockctl -g
+npm remove @kapeta/blockctl -g
 ``` 
 
 ## Structure
@@ -44,7 +44,7 @@ blockctl upgrade you-npm-command-module
 
 ### Extending
 To implement a command for blockctl we use
-[@blockware/blockctl-command](https://github.com/blockwarecom/blockctl-command)
+[@kapeta/blockctl-command](https://github.com/blockwarecom/blockctl-command)
 and the module must then be published as an NPM module for blockctl to install it
 
 **blockctl** expects a ```command``` property in the ```package.json``` file
@@ -52,7 +52,7 @@ of the command. This command property should contain the *name* of your command 
 e.g.
 ```json
 {
-  "name": "@blockware/blockctl-command-codegen",
+  "name": "@kapeta/blockctl-command-codegen",
   "command": "codegen",
   ...
 } 

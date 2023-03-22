@@ -2,7 +2,7 @@
 const {program} = require('commander');
 const packageData = require('./package.json');
 const Commands = require('./src/commands');
-const {BlockwareAPI} = require('@blockware/nodejs-api-client');
+const {KapetaAPI} = require('@kapeta/nodejs-api-client');
 
 function handleError(err) {
     if (err.error) {
@@ -51,9 +51,9 @@ program
     .description('Will install the NPM package as a command. Must be a valid blockctl-command implementation.')
     .action(makeCommand((packageName, commandName) => {
         if (!commandName) {
-            //Defaults to blockware package
+            //Defaults to kapeta package
             commandName = packageName;
-            packageName = '@blockware/blockctl-command-' + commandName.toLowerCase();
+            packageName = '@kapeta/blockctl-command-' + commandName.toLowerCase();
         }
 
         Commands.ensure(packageName, commandName);
@@ -74,7 +74,7 @@ program
 
 program
     .command('login')
-    .description('Authenticates against Blockware Cloud.')
+    .description('Authenticates against Kapeta Cloud.')
     .action(makeCommand(async () => {
         await Commands.login();
         process.exit(0);
@@ -82,7 +82,7 @@ program
 
 program
     .command('logout')
-    .description('Removes any current authentication for Blockware Cloud.')
+    .description('Removes any current authentication for Kapeta Cloud.')
     .action(makeCommand(async () => {
         await Commands.logout();
         process.exit(0);
@@ -121,7 +121,7 @@ program
     }));
 
 (async function() {
-    const api = new BlockwareAPI();
+    const api = new KapetaAPI();
     if (api.hasToken()) {
         try {
             //Make sure our access token is up to date
@@ -131,10 +131,10 @@ program
         }
 
         //We pass the path to the authentication file down to the sub commands
-        process.env.BLOCKWARE_CREDENTIALS = api.getTokenPath();
+        process.env.KAPETA_CREDENTIALS = api.getTokenPath();
 
         //We also pass the used blockctl down
-        process.env.BLOCKWARE_BLOCKCTL_PATH = process.argv[0];
+        process.env.KAPETA_BLOCKCTL_PATH = process.argv[0];
     }
 
     const commands = Commands.getCommands();
@@ -157,13 +157,13 @@ program
     if (process.argv.length < 3) {
 
     console.log(`
-    
-      ____  _            _                            
-     | __ )| | ___   ___| | ____      ____ _ _ __ ___ 
-     |  _ \\| |/ _ \\ / __| |/ /\\ \\ /\\ / / _\` | '__/ _ \\
-     | |_) | | (_) | (__|   <  \\ V  V / (_| | | |  __/
-     |____/|_|\\___/ \\___|_|\\_\\  \\_/\\_/ \\__,_|_|  \\___|
-    
+
+      ██╗  ██╗ █████╗ ██████╗ ███████╗████████╗ █████╗ 
+      ██║ ██╔╝██╔══██╗██╔══██╗██╔════╝╚══██╔══╝██╔══██╗
+      █████╔╝ ███████║██████╔╝█████╗     ██║   ███████║
+      ██╔═██╗ ██╔══██║██╔═══╝ ██╔══╝     ██║   ██╔══██║
+      ██║  ██╗██║  ██║██║     ███████╗   ██║   ██║  ██║
+      ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚══════╝   ╚═╝   ╚═╝  ╚═╝
                                                       
     `);
         program.help();

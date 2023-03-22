@@ -3,8 +3,8 @@ const mkdirp = require("mkdirp");
 const Path = require('path');
 const inquirer = require('inquirer');
 const open = require('open');
-const NPM = require('@blockware/npm-package-handler');
-const {BlockwareAPI} = require('@blockware/nodejs-api-client');
+const NPM = require('@kapeta/npm-package-handler');
+const {KapetaAPI} = require('@kapeta/nodejs-api-client');
 const Paths = require('./paths');
 
 function getCommandPath(commandName) {
@@ -220,20 +220,20 @@ class Commands {
         questions.push({
             type: 'input',
             name: 'service',
-            message: 'The url to the blockware service you want to authenticate against',
-            default: new BlockwareAPI().getBaseUrl()
+            message: 'The url to the kapeta service you want to authenticate against',
+            default: new KapetaAPI().getBaseUrl()
         });
 
         questions.push({
             type: 'input',
             name: 'client_id',
             message: 'The OAuth Client ID to authenticate using. Leave as default for most use cases.',
-            default: new BlockwareAPI().getClientId()
+            default: new KapetaAPI().getClientId()
         });
 
         const answers = await inquirer.prompt(questions);
 
-        const api = new BlockwareAPI({
+        const api = new KapetaAPI({
             base_url: answers.service,
             client_id: answers.client_id
         });
@@ -253,7 +253,7 @@ class Commands {
     }
 
     async listIdentities() {
-        const api = new BlockwareAPI();
+        const api = new KapetaAPI();
         const memberships = await api.getCurrentMemberships();
         const context = await api.getCurrentContext()
 
@@ -272,7 +272,7 @@ class Commands {
 
     async showCurrentIdentity() {
 
-        const api = new BlockwareAPI();
+        const api = new KapetaAPI();
 
         const identity = await api.getCurrentIdentity()
         const context = await api.getCurrentContext()
@@ -294,7 +294,7 @@ class Commands {
     }
 
     async useOrganization(handle) {
-        const api = new BlockwareAPI();
+        const api = new KapetaAPI();
         if (handle) {
             const membership = await api.switchContextTo(handle);
             console.log('Switched context to organization: %s', membership.identity.name);
@@ -307,7 +307,7 @@ class Commands {
 
 
     async logout() {
-        const api = new BlockwareAPI();
+        const api = new KapetaAPI();
         if (api.removeToken()) {
             console.log('Logged out');
         }

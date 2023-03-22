@@ -1,4 +1,4 @@
 {
-    "codegen": "@blockware/blockctl-command-codegen",
-    "registry": "@blockware/blockctl-command-registry"
+    "codegen": "@kapeta/blockctl-command-codegen",
+    "registry": "@kapeta/blockctl-command-registry"
 }

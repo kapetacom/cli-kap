@@ -22,7 +22,7 @@ jobs:
 
       - name: npm install
         run: |
-          npm config --location user set @blockware:registry ${{ secrets.GCP_ARTIFACT_NPM_URL }}
+          npm config --location user set @kapeta:registry ${{ secrets.GCP_ARTIFACT_NPM_URL }}
           npm install
 
       - name: Test for registry
