@@ -1,6 +1,6 @@
 {
     "name": "@kapeta/blockctl",
-    "version": "0.0.48",
+    "version": "0.0.49",
     "description": "Kapeta Command Line Utility",
     "main": "index.js",
     "license": "MIT",
