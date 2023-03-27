@@ -1,6 +1,5 @@
 {
     "codegen": "@kapeta/blockctl-command-codegen",
     "local-cluster": "@kapeta/blockctl-command-local-cluster",
-    "run": "@kapeta/blockctl-command-run",
-    "registry": "@kapeta/blockctl-command-registry"
+    "run": "@kapeta/blockctl-command-run"
 }
