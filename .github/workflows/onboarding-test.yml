@@ -22,7 +22,6 @@ jobs:
 
       - name: npm install
         run: |
-          npm config --location user set @kapeta:registry ${{ secrets.GCP_ARTIFACT_NPM_URL }}
           npm install
 
       - name: Test for registry
@@ -32,6 +31,6 @@ jobs:
       - name: Init defaults for registry
         run: node ./bin/blockctl registry init-defaults
       - name: Verify frontend for registry
-        run: node ./bin/blockctl registry ls | grep "core/block-type\[blockware/block-type-frontend" || exit 1
+        run: node ./bin/blockctl registry ls | grep "core/block-type\[kapeta/block-type-frontend" || exit 1
       - name: Verify service for registry
-        run: node ./bin/blockctl registry ls | grep "core/block-type\[blockware/block-type-service" || exit 1
+        run: node ./bin/blockctl registry ls | grep "core/block-type\[kapeta/block-type-service" || exit 1

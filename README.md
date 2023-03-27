@@ -1,6 +1,6 @@
-# Blockware command line utility
+# Kapeta command line utility
 
-Introduces using blockware through blockctl commands. 
+Introduces using kapeta through blockctl commands. 
 
 The purpose of ```blockctl``` is to make it simple to automate things 
 either locally or on servers - 
