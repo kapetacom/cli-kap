@@ -44,7 +44,7 @@ blockctl upgrade you-npm-command-module
 
 ### Extending
 To implement a command for blockctl we use
-[@kapeta/blockctl-command](https://github.com/blockwarecom/blockctl-command)
+[@kapeta/blockctl-command](https://github.com/kapetacom/blockctl-command)
 and the module must then be published as an NPM module for blockctl to install it
 
 **blockctl** expects a ```command``` property in the ```package.json``` file
