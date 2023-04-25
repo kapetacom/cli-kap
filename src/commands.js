@@ -7,8 +7,13 @@ const NPM = require('@kapeta/npm-package-handler');
 const {KapetaAPI} = require('@kapeta/nodejs-api-client');
 const Paths = require('./paths');
 
+/**
+ * 
+ * @param {string} commandName 
+ * @returns {string}
+ */
 function getCommandPath(commandName) {
-    return Path.join(Paths.BASEDIR_COMMANDS, commandName);
+    return Path.join(Paths.BASEDIR_COMMANDS, commandName);;
 }
 
 function getPackageJSON(commandName) {
@@ -159,6 +164,13 @@ class Commands {
             }
 
             commandName = packageInfo.command;
+        }
+
+        // Only allow lowercase, numbers and dashes
+        const validFilename = /^[a-z][0-9a-z-]+$/;
+        if (!validFilename.exec(commandName)) {
+            console.error(`Invalid command name: ${commandName}. Commands must be /[a-z]-/ such as "command-test"`);
+            return
         }
 
         console.log('Linking command %s to current working dir', commandName);
