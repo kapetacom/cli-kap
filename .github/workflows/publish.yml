@@ -14,9 +14,9 @@ jobs:
           registry-url: https://registry.npmjs.org/
           scope: '@kapeta'
 
-      - run: npm install
+      - run: npm install --ignore-scripts
       - run: npm run build-binary
       - uses: actions/upload-artifact@v3
         with:
           name: blockctl
-          path: ist/
+          path: dist/
