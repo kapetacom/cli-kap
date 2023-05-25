@@ -13,7 +13,7 @@ const Paths = require('./paths');
  * @returns {string}
  */
 function getCommandPath(commandName) {
-    return Path.join(Paths.BASEDIR_COMMANDS, commandName);;
+    return Path.join(Paths.BASEDIR_COMMANDS, commandName);
 }
 
 function getPackageJSON(commandName) {
@@ -206,7 +206,7 @@ class Commands {
     
     getCommandInfo(commandName) {
         const basePath = Path.join(Paths.BASEDIR_COMMANDS, commandName);
-        const commandInfo = require(Path.join(basePath, 'package.json'));
+        const commandInfo = readJSON(Path.join(basePath, 'package.json'));
 
         if (!commandInfo.main) {
             commandInfo.main = 'index.js';
