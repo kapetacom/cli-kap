@@ -8,7 +8,7 @@
     "publishConfig": {
         "access": "public"
     },
-    "author": "Henrik Hofmeister <hh@kapeta.com>",
+    "author": "Henrik Hofmeister <henrik.hofmeister@kapeta.com>",
     "bin": {
         "kapeta": "bin/kap"
     },
