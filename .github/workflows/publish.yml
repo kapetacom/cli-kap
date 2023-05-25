@@ -23,10 +23,6 @@ jobs:
         run: npm install --ignore-scripts
       - name: Build binaries
         run: npm run build-binary
-      - name: Sign OSX-ARM64
-        run: ldid -S dist/kap-macos-arm64
-      - name: Sign OSX-X64
-        run: ldid -S dist/kap-macos-x64
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
