@@ -1,4 +1,4 @@
-name: Publish Binary fields
+name: Publish executables
 on:
   release:
     types:
@@ -14,9 +14,15 @@ jobs:
           registry-url: https://registry.npmjs.org/
           scope: '@kapeta'
 
-      - run: npm install --ignore-scripts
-      - run: npm run build-binary
-      - uses: actions/upload-artifact@v3
+      - name: Install deps
+        run: npm install --ignore-scripts
+      - name: Build binaries
+        run: npm run build-binary
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: blockctl
-          path: dist/
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/*
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
