@@ -2,4 +2,4 @@
 
 process.title = 'blockctl';
 
-require('../index.js');
+require('../kap.js');

@@ -113,7 +113,7 @@ program
     }));
 
 program
-    .command('init-defaults')
+    .command('init')
     .description('Installs default commands.')
     .action(makeCommand(() => {
         Commands.ensureCommands();

@@ -1,16 +1,16 @@
 {
-    "name": "@kapeta/blockctl",
+    "name": "@kapeta/kap",
     "version": "0.0.53",
     "description": "Kapeta Command Line Utility",
-    "main": "index.js",
+    "main": "kap.js",
     "license": "MIT",
     "author": "Henrik Hofmeister <hh@kapeta.com>",
     "bin": {
-        "blockctl": "bin/blockctl"
+        "kapeta": "bin/kap"
     },
     "scripts": {
-        "postinstall": "node ./bin/blockctl init-defaults",
-        "build-binary": "pkg -t node18-alpine-x64,node18-alpine-arm64,node18-linux-x64,node18-linux-arm64,node18-linuxstatic-x64,node18-linuxstatic-arm64,node18-macos-x64,node18-macos-arm64,node18-win-x64,node18-win-arm64 --out-path dist/ bin/blockctl"
+        "postinstall": "node ./bin/kap init",
+        "build-binary": "pkg -t node18-alpine-x64,node18-alpine-arm64,node18-linux-x64,node18-linux-arm64,node18-linuxstatic-x64,node18-linuxstatic-arm64,node18-macos-x64,node18-macos-arm64,node18-win-x64,node18-win-arm64 --out-path dist/ kap.js"
     },
     "dependencies": {
         "@kapeta/local-cluster-config": "<2",
