@@ -10,7 +10,7 @@
     },
     "scripts": {
         "postinstall": "node ./bin/blockctl init-defaults",
-        "build-binary": "pkg -t node18-linux-x64,node18-macos-x64,node18-win-x64 --out-path dist/ bin/blockctl"
+        "build-binary": "pkg -t node18-alpine-x64,node18-linux-x64,node18-linux-arm64,node18-linuxstatic-x64,node18-macos-x64,node18-macos-arm64,node18-win-x64,node18-win-arm64 --out-path dist/ bin/blockctl"
     },
     "dependencies": {
         "@kapeta/local-cluster-config": "<2",
