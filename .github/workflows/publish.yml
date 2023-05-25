@@ -1,4 +1,4 @@
-name: Publish to Kapeta Public NPM
+name: Publish Binary fields
 on:
   release:
     types:
@@ -15,9 +15,6 @@ jobs:
           scope: '@kapeta'
 
       - run: npm install
-      - run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: npm run build-binary
       - uses: actions/upload-artifact@v3
         with:

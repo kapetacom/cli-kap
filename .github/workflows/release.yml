@@ -1,4 +1,4 @@
-name: Publish release
+name: Release NPM version
 on:
     push:
         branches:
