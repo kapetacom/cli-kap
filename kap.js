@@ -23,7 +23,7 @@ function makeCommand(callback) {
     }
 }
 
-program.name('blockctl')
+program.name('kap')
     .version(packageData.version);
 
 program
