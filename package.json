@@ -4,6 +4,10 @@
     "description": "Kapeta Command Line Utility",
     "main": "kap.js",
     "license": "MIT",
+    "private": false,
+    "publishConfig": {
+        "access": "public"
+    },
     "author": "Henrik Hofmeister <hh@kapeta.com>",
     "bin": {
         "kapeta": "bin/kap"
