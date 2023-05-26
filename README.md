@@ -66,7 +66,7 @@ kap link [command-name]
 ```
 The optional "command-name" parameter is to override what is in the 
 ```package.json``` file as mentioned before - or if nothing is there to 
-specify one.
+specify one.    
 
 kap will then create a symlink - very similar to 
 how ```npm link``` works - which allows it to find your local version of
