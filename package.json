@@ -20,6 +20,10 @@
         "scripts": [
             "kap.js"
         ],
+        "assets": [
+            "default-commands.json",
+            "ci-commands.json"
+        ],
         "targets": [
             "node18-alpine-x64",
             "node18-alpine-arm64",

@@ -2,7 +2,7 @@ const ClusterConfiguration = require("@kapeta/local-cluster-config");
 const Path = require("path");
 const BASEDIR_KAPETA = ClusterConfiguration.getKapetaBasedir();
 
-const BASEDIR_USER = Path.join(BASEDIR_KAPETA, 'blockctl');
+const BASEDIR_USER = Path.join(BASEDIR_KAPETA, 'cli');
 const USER_COMMANDS = Path.join(BASEDIR_USER , 'commands.json');
 const BASEDIR_COMMANDS = Path.join(BASEDIR_USER, 'commands');
 
