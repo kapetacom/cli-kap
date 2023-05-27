@@ -53,7 +53,7 @@ program
         if (!commandName) {
             //Defaults to kapeta package
             commandName = packageName;
-            packageName = '@kapeta/blockctl-command-' + commandName.toLowerCase();
+            packageName = '@kapeta/kap-' + commandName.toLowerCase();
         }
 
         Commands.ensure(packageName, commandName);
