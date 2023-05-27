@@ -44,7 +44,7 @@ kap upgrade you-npm-command-module
 
 ### Extending
 To implement a command for kap we use
-[@kapeta/kap-command](https://github.com/kapetacom/blockctl-command)
+[@kapeta/kap-command](https://github.com/kapetacom/cli-kap-command)
 and the module must then be published as an NPM module for kap to install it
 
 **kap** expects a ```command``` property in the ```package.json``` file
