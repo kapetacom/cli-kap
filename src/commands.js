@@ -212,7 +212,7 @@ class Commands {
             commandInfo.main = 'index.js';
         }
 
-        commandInfo.executable = Path.join(basePath,'index.js');
+        commandInfo.executable = Path.join(basePath, commandInfo.main);
 
         if (!commandInfo.command) {
             commandInfo.command = commandName;
