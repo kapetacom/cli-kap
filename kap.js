@@ -134,7 +134,7 @@ program
         process.env.KAPETA_CREDENTIALS = api.getTokenPath();
 
         //We also pass the used blockctl down
-        process.env.KAPETA_BLOCKCTL_PATH = process.argv[0];
+        process.env.KAPETA_CLI_PATH = process.argv[0];
     }
 
     const commands = Commands.getCommands();
