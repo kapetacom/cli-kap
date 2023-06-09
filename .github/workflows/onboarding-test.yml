@@ -24,12 +24,12 @@ jobs:
         run: npm install
 
       - name: Test for registry
-        run: node ./bin/blockctl | grep "Push and pull" || exit 1
+        run: node ./bin/kap | grep "Push and pull" || exit 1
       - name: Test for codegen
-        run: node ./bin/blockctl | grep "codegen" || exit 1
+        run: node ./bin/kap | grep "codegen" || exit 1
       - name: Init defaults for registry
-        run: node ./bin/blockctl registry init-defaults
+        run: node ./bin/kap registry init-defaults
       - name: Verify frontend for registry
-        run: node ./bin/blockctl registry ls | grep "core/block-type\[kapeta/block-type-frontend" || exit 1
+        run: node ./bin/kap registry ls | grep "core/block-type\[kapeta/block-type-frontend" || exit 1
       - name: Verify service for registry
-        run: node ./bin/blockctl registry ls | grep "core/block-type\[kapeta/block-type-service" || exit 1
+        run: node ./bin/kap registry ls | grep "core/block-type\[kapeta/block-type-service" || exit 1
