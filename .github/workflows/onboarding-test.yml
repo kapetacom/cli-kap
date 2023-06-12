@@ -23,10 +23,12 @@ jobs:
       - name: npm install
         run: npm install
 
-      - name: Test for registry
-        run: node ./bin/kap | grep "Push and pull" || exit 1
+      - name: Test basic command
+        run: node ./bin/kap
       - name: Test for codegen
-        run: node ./bin/kap | grep "codegen" || exit 1
+        run: node ./bin/kap codegen
+      - name: Test registry
+        run: node ./bin/kap registry
       - name: Init defaults for registry
         run: node ./bin/kap registry init-defaults
       - name: Verify frontend for registry
