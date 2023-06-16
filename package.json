@@ -1,6 +1,6 @@
 {
     "name": "@kapeta/kap",
-    "version": "0.0.53",
+    "version": "0.0.54",
     "description": "Kapeta Command Line Utility",
     "main": "kap.js",
     "license": "MIT",
