@@ -1,15 +1,15 @@
 const FS = require('fs');
-const mkdirp = require("mkdirp");
+const mkdirp = require('mkdirp');
 const Path = require('path');
 const inquirer = require('inquirer');
 const open = require('open');
 const NPM = require('@kapeta/npm-package-handler');
-const {KapetaAPI} = require('@kapeta/nodejs-api-client');
+const { KapetaAPI } = require('@kapeta/nodejs-api-client');
 const Paths = require('./paths');
 
 /**
- * 
- * @param {string} commandName 
+ *
+ * @param {string} commandName
  * @returns {string}
  */
 function getCommandPath(commandName) {
@@ -22,7 +22,7 @@ function getPackageJSON(commandName) {
 }
 
 function readJSON(filename) {
-    return JSON.parse(FS.readFileSync(filename).toString())
+    return JSON.parse(FS.readFileSync(filename).toString());
 }
 
 class Commands {
@@ -30,7 +30,7 @@ class Commands {
         this._ensureBaseDirs();
         this._commands = {};
     }
-    
+
     _ensureBaseDirs() {
         if (!FS.existsSync(Paths.BASEDIR_COMMANDS)) {
             mkdirp.sync(Paths.BASEDIR_COMMANDS);
@@ -50,14 +50,13 @@ class Commands {
     }
 
     _loadCommands() {
-        for(let i = 0; i < Paths.ALL_COMMANDS.length; i++) {
+        for (let i = 0; i < Paths.ALL_COMMANDS.length; i++) {
             const path = Paths.ALL_COMMANDS[i];
 
             if (!FS.existsSync(path)) {
                 console.log('Skipping commands because it does not exist: ', path);
                 continue;
             }
-
 
             const commands = readJSON(path);
             if (Object.keys(commands).length < 1) {
@@ -76,7 +75,7 @@ class Commands {
     ensureCommands() {
         this._loadCommands();
         console.log('Ensuring %s default commands...', Object.keys(this._commands).length);
-        for(const commandName in this._commands) {
+        for (const commandName in this._commands) {
             if (this._commands.hasOwnProperty(commandName)) {
                 const packageName = this._commands[commandName];
                 this.ensure(packageName, commandName);
@@ -141,7 +140,7 @@ class Commands {
 
     upgradeAll() {
         this._loadCommands();
-        for(const commandName in this._commands) {
+        for (const commandName in this._commands) {
             if (this._commands.hasOwnProperty(commandName)) {
                 this.upgrade(commandName);
             }
@@ -170,7 +169,7 @@ class Commands {
         const validFilename = /^[a-z][0-9a-z-]+$/;
         if (!validFilename.exec(commandName)) {
             console.error(`Invalid command name: ${commandName}. Commands must be /[a-z]-/ such as "command-test"`);
-            return
+            return;
         }
 
         console.log('Linking command %s to current working dir', commandName);
@@ -196,14 +195,14 @@ class Commands {
         const path = getCommandPath(commandName);
         return FS.existsSync(path);
     }
-    
+
     getCommands() {
         if (!FS.existsSync(Paths.BASEDIR_COMMANDS)) {
-            return []
+            return [];
         }
-        return FS.readdirSync(Paths.BASEDIR_COMMANDS)
+        return FS.readdirSync(Paths.BASEDIR_COMMANDS);
     }
-    
+
     getCommandInfo(commandName) {
         const basePath = Path.join(Paths.BASEDIR_COMMANDS, commandName);
         const commandInfo = readJSON(Path.join(basePath, 'package.json'));
@@ -212,16 +211,24 @@ class Commands {
             commandInfo.main = 'index.js';
         }
 
-        commandInfo.executable = Path.join(basePath, commandInfo.main);
+        // Detect executable and fall back to main
+        const bins = commandInfo.bin;
+        if (typeof bins === 'string') {
+            commandInfo.executable = Path.join(basePath, bins);
+        } else if (!!bins) {
+            commandInfo.executable = Path.join(basePath, bins[commandName] || bins[Object.keys(bins)[0]]);
+        } else {
+            commandInfo.executable = Path.join(basePath, commandInfo.main);
+        }
 
         if (!commandInfo.command) {
             commandInfo.command = commandName;
         }
-        
+
         if (!commandInfo.description) {
             commandInfo.description = 'No description';
         }
-        
+
         return commandInfo;
     }
 
@@ -233,21 +240,21 @@ class Commands {
             type: 'input',
             name: 'service',
             message: 'The url to the kapeta service you want to authenticate against',
-            default: new KapetaAPI().getBaseUrl()
+            default: new KapetaAPI().getBaseUrl(),
         });
 
         questions.push({
             type: 'input',
             name: 'client_id',
             message: 'The OAuth Client ID to authenticate using. Leave as default for most use cases.',
-            default: new KapetaAPI().getClientId()
+            default: new KapetaAPI().getClientId(),
         });
 
         const answers = await inquirer.prompt(questions);
 
         const api = new KapetaAPI({
             base_url: answers.service,
-            client_id: answers.client_id
+            client_id: answers.client_id,
         });
 
         await api.doDeviceAuthentication({
@@ -257,8 +264,8 @@ class Commands {
                 console.log('');
 
                 open(verification_uri_complete);
-            }
-        })
+            },
+        });
         console.log('Authenticated successfully!');
 
         await me.showCurrentIdentity();
@@ -267,10 +274,10 @@ class Commands {
     async listIdentities() {
         const api = new KapetaAPI();
         const memberships = await api.getCurrentMemberships();
-        const context = await api.getCurrentContext()
+        const context = await api.getCurrentContext();
 
         console.log('\n------------------------------------------------');
-        memberships.forEach(membership => {
+        memberships.forEach((membership) => {
             const isCurrent = !!(context && context.identity.id === membership.identity.id);
             if (isCurrent) {
                 console.log('* %s [%s] (Current context)', membership.identity.handle, membership.identity.name);
@@ -283,11 +290,10 @@ class Commands {
     }
 
     async showCurrentIdentity() {
-
         const api = new KapetaAPI();
 
-        const identity = await api.getCurrentIdentity()
-        const context = await api.getCurrentContext()
+        const identity = await api.getCurrentIdentity();
+        const context = await api.getCurrentContext();
 
         if (!identity) {
             console.error('Could not find identity [%s]', api.getUserInfo()?.sub);
@@ -316,15 +322,12 @@ class Commands {
         }
     }
 
-
-
     async logout() {
         const api = new KapetaAPI();
         if (api.removeToken()) {
             console.log('Logged out');
         }
     }
-
 }
 
 module.exports = new Commands();
