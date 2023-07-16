@@ -41,14 +41,11 @@
     "dependencies": {
         "@kapeta/local-cluster-config": "<2",
         "@kapeta/nodejs-api-client": "<2",
-        "@kapeta/npm-package-handler": ">= 0.0.17 <2",
+        "@kapeta/npm-package-handler": "<2",
         "commander": "^9.4.1",
         "inquirer": "^7.2.0",
-        "jwt-decode": "^3.1.2",
         "mkdirp": "0.5.1",
-        "open": "^8.4.0",
-        "request": "^2.88.2",
-        "rimraf": "2.6.3"
+        "open": "^8.4.0"
     },
     "devDependencies": {
         "@kapeta/prettier-config": "^0.6.0",

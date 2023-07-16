@@ -72,18 +72,18 @@ class Commands {
         this._writeUserCommands();
     }
 
-    ensureCommands() {
+    async ensureCommands() {
         this._loadCommands();
         console.log('Ensuring %s default commands...', Object.keys(this._commands).length);
         for (const commandName in this._commands) {
             if (this._commands.hasOwnProperty(commandName)) {
                 const packageName = this._commands[commandName];
-                this.ensure(packageName, commandName);
+                await this.ensure(packageName, commandName);
             }
         }
     }
 
-    install(packageName, commandName) {
+    async install(packageName, commandName) {
         if (this.exists(commandName)) {
             throw new Error('Command already exists: ' + commandName);
         }
@@ -94,7 +94,7 @@ class Commands {
 
         const npm = new NPM(path);
 
-        npm.install(packageName);
+        await npm.install(packageName);
 
         this._commands[commandName] = packageName;
         this._writeUserCommands();
@@ -121,7 +121,7 @@ class Commands {
         console.log('-- Removed command %s from %s', commandName, path);
     }
 
-    upgrade(commandName) {
+    async upgrade(commandName) {
         if (!this.exists(commandName)) {
             console.error('Command not found: ' + commandName);
             return;
@@ -133,16 +133,16 @@ class Commands {
         console.log('Upgrading command %s for %s', commandName, packageJson.name);
 
         const npm = new NPM(path);
-        npm.upgrade(packageJson.name);
+        await npm.upgrade(packageJson.name);
 
         console.log('-- Upgraded command %s from %s', commandName, packageJson.name);
     }
 
-    upgradeAll() {
+    async upgradeAll() {
         this._loadCommands();
         for (const commandName in this._commands) {
             if (this._commands.hasOwnProperty(commandName)) {
-                this.upgrade(commandName);
+                await this.upgrade(commandName);
             }
         }
     }
@@ -180,7 +180,7 @@ class Commands {
         npm.link(process.cwd());
     }
 
-    ensure(packageName, commandName, silent) {
+    async ensure(packageName, commandName, silent) {
         if (this.exists(commandName)) {
             if (!silent) {
                 console.log('Command already exists: %s', commandName);
@@ -188,7 +188,7 @@ class Commands {
             return;
         }
 
-        this.install(packageName, commandName);
+        await this.install(packageName, commandName);
     }
 
     exists(commandName) {

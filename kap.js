@@ -57,14 +57,14 @@ program
     "Will install the NPM package as a command. Must be a valid kap-command implementation."
   )
   .action(
-    makeCommand((packageName, commandName) => {
+    makeCommand(async (packageName, commandName) => {
       if (!commandName) {
         //Defaults to kapeta package
         commandName = packageName;
         packageName = "@kapeta/kap-" + commandName.toLowerCase();
       }
 
-      Commands.ensure(packageName, commandName);
+      await Commands.ensure(packageName, commandName);
       process.exit(0);
     })
   );
@@ -73,11 +73,11 @@ program
   .command("upgrade [command-name]")
   .description("Upgrades all commands - or specific command if specified")
   .action(
-    makeCommand((commandName) => {
+    makeCommand(async (commandName) => {
       if (commandName) {
-        Commands.upgrade(commandName);
+        await Commands.upgrade(commandName);
       } else {
-        Commands.upgradeAll();
+        await Commands.upgradeAll();
       }
       process.exit(0);
     })
@@ -137,8 +137,8 @@ program
   .command("init")
   .description("Installs default commands.")
   .action(
-    makeCommand(() => {
-      Commands.ensureCommands();
+    makeCommand(async () => {
+      await Commands.ensureCommands();
       process.exit(0);
     })
   );
