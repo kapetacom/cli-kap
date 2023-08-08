@@ -18,6 +18,9 @@ function getCommandPath(commandName) {
 
 function getPackageJSON(commandName) {
     const path = getCommandPath(commandName) + '/package.json';
+    if (!FS.existsSync(path)) {
+        throw new Error('Command does not exist: ' + commandName);
+    }
     return readJSON(path);
 }
 
@@ -192,7 +195,7 @@ class Commands {
     }
 
     exists(commandName) {
-        const path = getCommandPath(commandName);
+        const path = getCommandPath(commandName) + '/package.json';
         return FS.existsSync(path);
     }
 
@@ -200,7 +203,12 @@ class Commands {
         if (!FS.existsSync(Paths.BASEDIR_COMMANDS)) {
             return [];
         }
-        return FS.readdirSync(Paths.BASEDIR_COMMANDS);
+        return FS.readdirSync(Paths.BASEDIR_COMMANDS).filter((file) => {
+            if (FS.existsSync(Path.join(Paths.BASEDIR_COMMANDS, file, 'package.json'))) {
+                return true;
+            }
+            return false;
+        });
     }
 
     getCommandInfo(commandName) {
