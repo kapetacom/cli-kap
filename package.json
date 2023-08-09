@@ -47,6 +47,7 @@
         "mkdirp": "0.5.1",
         "open": "^8.4.0"
     },
+    "bundledDependencies": true,
     "devDependencies": {
         "@kapeta/prettier-config": "^0.6.0",
         "pkg": "^5.8.1"
