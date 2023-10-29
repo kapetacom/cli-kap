@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/**
+ * Copyright 2023 Kapeta Inc.
+ * SPDX-License-Identifier: MIT
+ */
+
 const { program } = require("commander");
 const packageData = require("./package.json");
 const Commands = require("./src/commands");

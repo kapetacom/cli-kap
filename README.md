@@ -72,3 +72,6 @@ kap will then create a symlink - very similar to
 how ```npm link``` works - which allows it to find your local version of
 the command.
 
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
