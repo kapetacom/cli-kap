@@ -1,3 +1,8 @@
+/**
+ * Copyright 2023 Kapeta Inc.
+ * SPDX-License-Identifier: MIT
+ */
+
 const ClusterConfiguration = require("@kapeta/local-cluster-config").default;
 const Path = require("path");
 const BASEDIR_KAPETA = ClusterConfiguration.getKapetaBasedir();
