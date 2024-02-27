@@ -1,4 +1,5 @@
 {
   "codegen": "@kapeta/kap-codegen",
-  "registry": "@kapeta/kap-registry"
+  "registry": "@kapeta/kap-registry",
+  "config": "@kapeta/kap-config"
 }
