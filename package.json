@@ -44,14 +44,22 @@
     },
     "dependencies": {
         "@kapeta/local-cluster-config": "<2",
-        "@kapeta/nodejs-api-client": ">=0.1.6 <2",
+        "@kapeta/nodejs-api-client": "^1.0.1",
         "@kapeta/npm-package-handler": "<2",
         "commander": "^9.4.1",
         "inquirer": "^7.2.0",
         "mkdirp": "0.5.1",
         "open": "^8.4.0"
     },
-    "bundledDependencies": true,
+    "bundledDependencies": [
+        "@kapeta/local-cluster-config",
+        "@kapeta/nodejs-api-client",
+        "@kapeta/npm-package-handler",
+        "commander",
+        "inquirer",
+        "mkdirp",
+        "open"
+    ],
     "devDependencies": {
         "@kapeta/prettier-config": "^0.6.0",
         "pkg": "^5.8.1"
