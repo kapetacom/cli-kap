@@ -48,7 +48,7 @@
         "@kapeta/npm-package-handler": "<2",
         "commander": "^9.4.1",
         "inquirer": "^7.2.0",
-        "mkdirp": "0.5.1",
+        "mkdirp": "3.0.1",
         "open": "^8.4.0"
     },
     "bundledDependencies": [
